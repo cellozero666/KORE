@@ -1,2 +1,6 @@
 # Legacy project
 LEGACY/
+# Aider cahce
+.aider*
+# UI PRO MAX
+.gemini*
