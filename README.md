@@ -92,8 +92,8 @@ Primary implementation agent.
 
 Powered by:
 
-* Aider
-* qwen2.5-coder
+* OpenCode
+* Laguna XS 2.1OpenRouter
 
 Responsible for:
 

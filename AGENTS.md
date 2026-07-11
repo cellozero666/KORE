@@ -14,8 +14,8 @@ Identidade
 
 O codinome Belthazar é reservado exclusivamente para a seguinte combinação de ferramentas:
 
-* Aider
-* qwen2.5-coder
+* OpenCode
+* Laguna XS 2.1OpenRouter
 
 Nenhuma outra IA ou agente poderá assumir este codinome.
 

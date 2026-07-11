@@ -1,6 +1,6 @@
-# Tauri + React + Typescript
+# K.O.R.E. Companion - macOS
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Companion App for K.O.R.E. - a multiplatform ecosystem with ESP32 firmware and companion applications.
 
 ## Recommended IDE Setup
 

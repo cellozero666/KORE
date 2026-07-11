@@ -168,8 +168,8 @@ Responsável por:
 
 Belthazar corresponde exclusivamente à combinação:
 
-* Aider
-* qwen2.5-coder
+* OpenCode
+* Laguna XS 2.1OpenRouter
 
 Melchior
 
