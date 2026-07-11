@@ -44,8 +44,8 @@ Fonte Oficial da Verdade
 Antes de iniciar qualquer trabalho, Melchior deverá consultar obrigatoriamente:
 
 1. PROJECT.md
-2. Documento da funcionalidade em /SPEC
-3. ADRs relacionadas
+2. Documento da funcionalidade em /specs
+3. ADRs relacionadas em /ADR
 4. Harness da tarefa
 
 Caso exista conflito entre documentos, esta ordem define a prioridade.
