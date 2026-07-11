@@ -30,4 +30,23 @@ Ao concluir o módulo:
 - Validar envio de comandos através da área **Command Test**.
 - Apresentar o resultado para validação.
 
+
+## Entrega
+
+Ao concluir o módulo:
+
+- Garantir que o projeto compile.
+- Corrigir erros e warnings.
+- Executar os testes do módulo.
+- Validar em hardware real utilizando o K.O.R.E. OS.
+- Validar obtenção de `version`.
+- Validar obtenção de `uptime`.
+- Validar obtenção de `wifi_status`.
+- Validar o envio de comandos através da área **Command Test**.
+- Comprovar, por meio de logs ou evidências, que os comandos foram enviados ao firmware e que as respostas foram recebidas corretamente.
+- Apresentar o resultado para validação.
+
+Não iniciar o próximo Harness sem aprovação explícita do usuário.
+
+
 Não iniciar o próximo Harness sem aprovação explícita do usuário.
