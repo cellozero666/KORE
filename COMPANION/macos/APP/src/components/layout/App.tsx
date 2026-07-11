@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
+import { StoreProvider } from "../../state";
 import LoadingScreen from "../common/LoadingScreen";
 import Sidebar from "./Sidebar";
 import Dashboard from "../../pages/Dashboard";
@@ -22,20 +23,22 @@ function App() {
   }
 
   return (
-    <HashRouter>
-      <div className="layout">
-        <Sidebar />
-        <main className="content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/spotify" element={<Spotify />} />
-            <Route path="/google" element={<Google />} />
-            <Route path="/weather" element={<Weather />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </main>
-      </div>
-    </HashRouter>
+    <StoreProvider>
+      <HashRouter>
+        <div className="layout">
+          <Sidebar />
+          <main className="content">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/spotify" element={<Spotify />} />
+              <Route path="/google" element={<Google />} />
+              <Route path="/weather" element={<Weather />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </main>
+        </div>
+      </HashRouter>
+    </StoreProvider>
   );
 }
 
