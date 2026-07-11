@@ -34,7 +34,6 @@ Escopo
 * Criar a área principal de conteúdo.
 * Preparar o layout para futuras telas.
 * Garantir que o layout ocupe toda a área útil da janela.
-* Garantir suporte ao redimensionamento da janela.
 
 Itens da Sidebar
 
@@ -68,5 +67,4 @@ Critérios de Aceitação
 * Os atalhos dos módulos estão visíveis.
 * Dashboard é a tela inicial.
 * O layout ocupa toda a área útil da janela.
-* O redimensionamento da janela funciona corretamente.
 * A estrutura permanece preparada para os próximos módulos.
