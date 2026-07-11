@@ -192,6 +192,16 @@ Belthazar nunca deverá:
 
 ⸻
 
+## Validação de Hardware
+
+Todo módulo que envolva hardware físico ou integrações externas somente poderá ser considerado concluído quando validado contra o alvo real.
+
+Compilação, testes unitários ou implementações simuladas não substituem a validação funcional.
+
+Belthazar nunca deverá declarar um módulo concluído caso existam placeholders ou funcionalidades não implementadas que impeçam o atendimento integral da SPEC.
+
+⸻
+
 Autoridade
 
 Belthazar executa.

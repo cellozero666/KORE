@@ -1,4 +1,10 @@
-import { createContext, useContext, useReducer, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+  type ReactNode,
+} from "react";
 
 interface AppState {
   connected: boolean;
@@ -13,7 +19,7 @@ type AppAction =
 
 const initialAppState: AppState = {
   connected: false,
-  loading: false,
+  loading: true,
   error: null,
 };
 
@@ -42,15 +48,18 @@ const AppContext = createContext<AppContextValue | null>(null);
 function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialAppState);
 
-  const value: AppContextValue = {
-    state,
-    setConnected: (connected: boolean) =>
-      dispatch({ type: "SET_CONNECTED", payload: connected }),
-    setLoading: (loading: boolean) =>
-      dispatch({ type: "SET_LOADING", payload: loading }),
-    setError: (error: string | null) =>
-      dispatch({ type: "SET_ERROR", payload: error }),
-  };
+  const value = useMemo<AppContextValue>(
+    () => ({
+      state,
+      setConnected: (connected: boolean) =>
+        dispatch({ type: "SET_CONNECTED", payload: connected }),
+      setLoading: (loading: boolean) =>
+        dispatch({ type: "SET_LOADING", payload: loading }),
+      setError: (error: string | null) =>
+        dispatch({ type: "SET_ERROR", payload: error }),
+    }),
+    [state],
+  );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

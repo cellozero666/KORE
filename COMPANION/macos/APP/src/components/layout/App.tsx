@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { StoreProvider } from "../../state";
+import { StoreProvider, useApp } from "../../state";
+import { useConnection } from "../../hooks/useConnection";
 import LoadingScreen from "../common/LoadingScreen";
 import Sidebar from "./Sidebar";
 import Dashboard from "../../pages/Dashboard";
@@ -11,34 +11,40 @@ import Settings from "../../pages/Settings";
 import "../../assets/css/App.css";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  return (
+    <StoreProvider>
+      <AppContent />
+    </StoreProvider>
+  );
+}
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 5000);
-    return () => clearTimeout(timer);
-  }, []);
+function AppContent() {
+  const { state } = useApp();
+  const { startConnection } = useConnection();
 
-  if (loading) {
+  if (state.loading && !state.error) {
     return <LoadingScreen />;
   }
 
+  if (state.error && !state.loading) {
+    return <LoadingScreen error={state.error} onRetry={startConnection} />;
+  }
+
   return (
-    <StoreProvider>
-      <HashRouter>
-        <div className="layout">
-          <Sidebar />
-          <main className="content">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/spotify" element={<Spotify />} />
-              <Route path="/google" element={<Google />} />
-              <Route path="/weather" element={<Weather />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </main>
-        </div>
-      </HashRouter>
-    </StoreProvider>
+    <HashRouter>
+      <div className="layout">
+        <Sidebar />
+        <main className="content">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/spotify" element={<Spotify />} />
+            <Route path="/google" element={<Google />} />
+            <Route path="/weather" element={<Weather />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </main>
+      </div>
+    </HashRouter>
   );
 }
 
