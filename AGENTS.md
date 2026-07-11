@@ -68,9 +68,9 @@ Fonte Oficial da Verdade
 Antes de iniciar qualquer implementação, Belthazar deverá consultar obrigatoriamente, na seguinte ordem:
 
 1. PROJECT.md
-2. Documento da funcionalidade em /specs
+2. Documento da funcionalidade em /SPEC
 3. ADRs relacionadas em /ADR
-4. Harness da tarefa
+4. Harness da tarefa /HARNESS
 
 Caso exista conflito entre documentos, esta ordem define a prioridade.
 
