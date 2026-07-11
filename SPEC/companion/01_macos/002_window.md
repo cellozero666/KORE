@@ -32,7 +32,7 @@ Escopo
     * Width: 900 px
     * Height: 700 px
 * Definir dimensões mínimas da janela.
-* Configurar a janela como redimensionável.
+* Configurar a janela como não redimensionável.
 * Configurar o comportamento ao iniciar a aplicação.
 * Configurar o comportamento ao fechar a janela.
 * Configurar o foco da janela.
