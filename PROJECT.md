@@ -169,7 +169,7 @@ Responsável por:
 Belthazar corresponde exclusivamente à combinação:
 
 * OpenCode
-* Laguna XS 2.1OpenRouter
+* DeepSeek V4 Flash Free
 
 Melchior
 

@@ -93,7 +93,7 @@ Primary implementation agent.
 Powered by:
 
 * OpenCode
-* Laguna XS 2.1OpenRouter
+* DeepSeek V4 Flash Free
 
 Responsible for:
 

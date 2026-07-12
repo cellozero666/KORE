@@ -1,13 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { KoreIcon } from "../common/KoreIcon";
+import items from "./sidebarItems";
 import "../../assets/css/Sidebar.css";
-
-const items = [
-  { label: "Dashboard", path: "/" },
-  { label: "Spotify", path: "/spotify" },
-  { label: "Google", path: "/google" },
-  { label: "Weather", path: "/weather" },
-  { label: "Settings", path: "/settings" },
-];
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -15,7 +10,10 @@ function Sidebar() {
 
   return (
     <nav className="sidebar">
-      <div className="sidebar-header">K.O.R.E.</div>
+      <div className="sidebar-header">
+        <KoreIcon className="sidebar-logo" />
+        <span className="sidebar-title">K.O.R.E.</span>
+      </div>
       <ul className="sidebar-nav">
         {items.map((item) => (
           <li key={item.path}>
@@ -23,7 +21,8 @@ function Sidebar() {
               className={`sidebar-item ${location.pathname === item.path ? "active" : ""}`}
               onClick={() => navigate(item.path)}
             >
-              {item.label}
+              <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
+              <span className="sidebar-label">{item.label}</span>
             </button>
           </li>
         ))}

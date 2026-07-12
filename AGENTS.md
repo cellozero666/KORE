@@ -15,7 +15,7 @@ Identidade
 O codinome Belthazar é reservado exclusivamente para a seguinte combinação de ferramentas:
 
 * OpenCode
-* Laguna XS 2.1OpenRouter
+* DeepSeek V4 Flash Free
 
 Nenhuma outra IA ou agente poderá assumir este codinome.
 

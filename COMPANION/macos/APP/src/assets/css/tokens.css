@@ -1,0 +1,29 @@
+/* DESIGN TOKENS - K.O.R.E. Global Structure */
+:root {
+  /* Color Palette (Placeholder/Systemic structure) */
+  --color-bg-app: #0f0f0f;
+  --color-bg-sidebar: #1a1a1a;
+  --color-bg-surface: #2a2a2a;
+  --color-text-primary: #f6f6f6;
+  --color-text-secondary: #aaa;
+  --color-accent: #0bebc9;
+  --color-border: #2a2a2a;
+
+  /* Spacing Scale (based on 4px/8px rhythm) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-size-base: 13px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* Layout */
+  --sidebar-width: 200px;
+  --radius-md: 6px;
+}

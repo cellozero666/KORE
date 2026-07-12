@@ -226,7 +226,7 @@ Nenhum módulo poderá avançar sem validação do usuário.
 Ferramentas:
 
 - OpenCode
-- Laguna XS 2.1OpenRouter
+- DeepSeek V4 Flash Free
 
 ## Melchior
 
