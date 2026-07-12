@@ -27,29 +27,33 @@ pub async fn spotify_disconnect(
 #[command]
 pub async fn spotify_play(
     state: tauri::State<'_, SpotifyState>,
+    app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
-    spotify::player_play(&state).await
+    spotify::player_play(&state, &app_handle).await
 }
 
 #[command]
 pub async fn spotify_pause(
     state: tauri::State<'_, SpotifyState>,
+    app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
-    spotify::player_pause(&state).await
+    spotify::player_pause(&state, &app_handle).await
 }
 
 #[command]
 pub async fn spotify_next(
     state: tauri::State<'_, SpotifyState>,
+    app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
-    spotify::player_next(&state).await
+    spotify::player_next(&state, &app_handle).await
 }
 
 #[command]
 pub async fn spotify_previous(
     state: tauri::State<'_, SpotifyState>,
+    app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
-    spotify::player_previous(&state).await
+    spotify::player_previous(&state, &app_handle).await
 }
 
 #[command]

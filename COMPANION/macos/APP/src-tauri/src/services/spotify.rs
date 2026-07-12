@@ -139,7 +139,10 @@ async fn refresh_access_token(refresh_token: &str) -> Result<SpotifyTokenRespons
     Ok(token)
 }
 
-async fn ensure_token(spotify_state: &SpotifyState) -> Result<String, String> {
+async fn ensure_token(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+) -> Result<String, String> {
     let mut inner = spotify_state.inner.lock().await;
 
     let now = SystemTime::now()
@@ -166,6 +169,7 @@ async fn ensure_token(spotify_state: &SpotifyState) -> Result<String, String> {
     if let Some(new_refresh) = &token_response.refresh_token {
         if new_refresh != &refresh_token {
             inner.refresh_token = Some(new_refresh.clone());
+            save_refresh_token(app_handle, new_refresh).await;
         }
     }
 
@@ -174,8 +178,11 @@ async fn ensure_token(spotify_state: &SpotifyState) -> Result<String, String> {
 
 // ─── API calls ────────────────────────────────────────────────────────────────
 
-async fn fetch_user_profile(spotify_state: &SpotifyState) -> Result<SpotifyUser, String> {
-    let token = ensure_token(spotify_state).await?;
+async fn fetch_user_profile(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+) -> Result<SpotifyUser, String> {
+    let token = ensure_token(spotify_state, app_handle).await?;
     let client = reqwest::Client::new();
 
     let resp = client
@@ -226,8 +233,9 @@ fn parse_track_response(
 
 async fn fetch_currently_playing(
     spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
 ) -> Result<Option<SpotifyPlayback>, String> {
-    let token = ensure_token(spotify_state).await?;
+    let token = ensure_token(spotify_state, app_handle).await?;
     let client = reqwest::Client::new();
 
     let resp = client
@@ -264,8 +272,12 @@ async fn fetch_currently_playing(
     )))
 }
 
-async fn api_post_empty(spotify_state: &SpotifyState, path: &str) -> Result<(), String> {
-    let token = ensure_token(spotify_state).await?;
+async fn api_post_empty(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+    path: &str,
+) -> Result<(), String> {
+    let token = ensure_token(spotify_state, app_handle).await?;
     let client = reqwest::Client::new();
 
     let url = format!("{}{}", SPOTIFY_API_BASE, path);
@@ -287,8 +299,12 @@ async fn api_post_empty(spotify_state: &SpotifyState, path: &str) -> Result<(), 
     Ok(())
 }
 
-async fn api_put_empty(spotify_state: &SpotifyState, path: &str) -> Result<(), String> {
-    let token = ensure_token(spotify_state).await?;
+async fn api_put_empty(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+    path: &str,
+) -> Result<(), String> {
+    let token = ensure_token(spotify_state, app_handle).await?;
     let client = reqwest::Client::new();
 
     let url = format!("{}{}", SPOTIFY_API_BASE, path);
@@ -310,20 +326,32 @@ async fn api_put_empty(spotify_state: &SpotifyState, path: &str) -> Result<(), S
     Ok(())
 }
 
-pub async fn player_play(spotify_state: &SpotifyState) -> Result<(), String> {
-    api_put_empty(spotify_state, "/me/player/play").await
+pub async fn player_play(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+) -> Result<(), String> {
+    api_put_empty(spotify_state, app_handle, "/me/player/play").await
 }
 
-pub async fn player_pause(spotify_state: &SpotifyState) -> Result<(), String> {
-    api_put_empty(spotify_state, "/me/player/pause").await
+pub async fn player_pause(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+) -> Result<(), String> {
+    api_put_empty(spotify_state, app_handle, "/me/player/pause").await
 }
 
-pub async fn player_next(spotify_state: &SpotifyState) -> Result<(), String> {
-    api_post_empty(spotify_state, "/me/player/next").await
+pub async fn player_next(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+) -> Result<(), String> {
+    api_post_empty(spotify_state, app_handle, "/me/player/next").await
 }
 
-pub async fn player_previous(spotify_state: &SpotifyState) -> Result<(), String> {
-    api_post_empty(spotify_state, "/me/player/previous").await
+pub async fn player_previous(
+    spotify_state: &SpotifyState,
+    app_handle: &tauri::AppHandle,
+) -> Result<(), String> {
+    api_post_empty(spotify_state, app_handle, "/me/player/previous").await
 }
 
 // ─── OAuth flow ───────────────────────────────────────────────────────────────
@@ -424,7 +452,7 @@ pub async fn handle_callback(
         save_refresh_token(app_handle, ref_token).await;
     }
 
-    match fetch_user_profile(spotify_state).await {
+    match fetch_user_profile(spotify_state, app_handle).await {
         Ok(user) => {
             info!("[SPOTIFY] logged in as {}", user.display_name);
             let mut inner = spotify_state.inner.lock().await;
@@ -458,7 +486,7 @@ async fn emit_status(spotify_state: &SpotifyState, app_handle: &tauri::AppHandle
 // ─── Watcher ──────────────────────────────────────────────────────────────────
 
 async fn update_playback_and_sync(spotify_state: &SpotifyState, app_handle: &tauri::AppHandle) {
-    let playback = match fetch_currently_playing(spotify_state).await {
+    let playback = match fetch_currently_playing(spotify_state, app_handle).await {
         Ok(Some(p)) => Some(p),
         Ok(None) => None,
         Err(e) => {
@@ -620,7 +648,7 @@ pub async fn init(app_handle: tauri::AppHandle) {
             inner.refresh_token = Some(ref_token);
         }
 
-        match fetch_user_profile(&spotify_state).await {
+        match fetch_user_profile(&spotify_state, &app_handle).await {
             Ok(user) => {
                 info!("[SPOTIFY] session restored for {}", user.display_name);
                 let mut inner = spotify_state.inner.lock().await;
