@@ -158,7 +158,4 @@ impl Transport for SerialTransport {
         self.connected
     }
 
-    fn transport_type(&self) -> &'static str {
-        "Serial"
-    }
 }

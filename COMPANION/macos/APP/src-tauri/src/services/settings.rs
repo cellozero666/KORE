@@ -69,17 +69,6 @@ pub async fn search_cities(query: &str, country_code: &str) -> Result<Vec<CityRe
         params.push(("country_code", country_code));
     }
 
-    let mut params = vec![
-        ("name", query),
-        ("count", "10"),
-        ("language", "pt"),
-        ("format", "json"),
-    ];
-
-    if !country_code.is_empty() {
-        params.push(("country_code", country_code));
-    }
-
     let resp = client
         .get(GEOCODING_BASE)
         .query(&params)

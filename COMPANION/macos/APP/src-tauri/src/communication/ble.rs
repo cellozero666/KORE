@@ -252,7 +252,4 @@ impl Transport for BleTransport {
         self.connected
     }
 
-    fn transport_type(&self) -> &'static str {
-        "BLE"
-    }
 }

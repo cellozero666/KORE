@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "kore-companion",
+  "productName": "K.O.R.E. Companion",
   "version": "0.1.0",
   "identifier": "com.kore.companion",
   "build": {

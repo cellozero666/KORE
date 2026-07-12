@@ -8,7 +8,6 @@ pub trait Transport: Send + Sync {
     async fn disconnect(&mut self) -> Result<(), String>;
     async fn send(&mut self, data: &str) -> Result<String, String>;
     fn is_connected(&self) -> bool;
-    fn transport_type(&self) -> &'static str;
 }
 
 pub async fn perform_handshake(transport: &mut dyn Transport) -> Result<(), String> {

@@ -384,42 +384,6 @@ pub async fn start_local_server_and_wait_for_code(
     result_value
 }
 
-// ─── Auth URL ─────────────────────────────────────────────────────────────────
-
-pub async fn generate_auth_url(google_state: &GoogleState) -> Result<String, String> {
-    let (code_verifier, code_challenge) = generate_pkce();
-    let auth_state = uuid::Uuid::new_v4().to_string();
-
-    {
-        let mut inner = google_state.inner.lock().await;
-        inner.code_verifier = Some(code_verifier);
-        inner.auth_state = Some(auth_state.clone());
-    }
-
-    let params = [
-        ("client_id", GOOGLE_CLIENT_ID),
-        ("response_type", "code"),
-        ("redirect_uri", GOOGLE_REDIRECT_URI),
-        ("code_challenge_method", "S256"),
-        ("code_challenge", &code_challenge),
-        ("state", &auth_state),
-        ("scope", SCOPES),
-        ("access_type", "offline"),
-        ("prompt", "consent"),
-    ];
-
-    let query: String = params
-        .iter()
-        .map(|(k, v)| format!("{}={}", k, encode(v)))
-        .collect::<Vec<_>>()
-        .join("&");
-
-    Ok(format!(
-        "{}/o/oauth2/v2/auth?{}",
-        GOOGLE_ACCOUNTS_BASE, query
-    ))
-}
-
 // ─── State helpers ────────────────────────────────────────────────────────────
 
 async fn emit_status(google_state: &GoogleState, app_handle: &tauri::AppHandle) {
