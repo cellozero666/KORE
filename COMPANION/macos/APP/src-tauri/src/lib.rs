@@ -23,6 +23,13 @@ pub fn run() {
             commands::connection::send_command,
             commands::connection::get_connection_status,
         ])
+        .setup(|app| {
+            let handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                services::notifications::init(handle).await;
+            });
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

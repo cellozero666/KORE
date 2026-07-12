@@ -56,6 +56,13 @@ impl AppState {
         manager.send_command(&command).await
     }
 
+    /// Send a command without waiting for a response (fire-and-forget).
+    /// Used for notifications where the firmware does not reply.
+    pub async fn send_fire_forget(&self, command: String) -> Result<(), String> {
+        let mut manager = self.manager.lock().await;
+        manager.send_fire_forget(&command).await
+    }
+
     pub async fn status(&self) -> ConnectionStatus {
         let manager = self.manager.lock().await;
         manager.status()

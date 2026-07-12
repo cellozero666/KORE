@@ -43,6 +43,16 @@ Escopo
 
 ⸻
 
+## Decisão Arquitetural
+
+O monitoramento de notificações do macOS utilizará obrigatoriamente a API de Accessibility.
+
+Esta decisão foi validada na implementação legada do Companion e permanece como padrão oficial da arquitetura do K.O.R.E.
+
+Belthazar não deverá substituir esta abordagem por outras APIs, frameworks ou mecanismos de captura sem autorização explícita.
+
+⸻
+
 Permissões
 
 Ao iniciar o Companion, caso a permissão de Accessibility não tenha sido concedida, a aplicação deverá solicitá-la ao usuário.
@@ -58,6 +68,26 @@ O monitoramento deverá permanecer ativo durante toda a execução do Companion.
 Toda nova notificação recebida pelo macOS deverá ser processada automaticamente.
 
 Não deverá existir necessidade de intervenção do usuário.
+
+O watcher deverá ser inicializado apenas uma única vez durante todo o ciclo de vida da aplicação.
+
+⸻
+
+Responsabilidades
+
+A camada responsável pela captura das notificações deverá produzir um objeto estruturado contendo:
+
+* app
+* sender
+* content
+
+A conversão para o protocolo do K.O.R.E.
+
+notification|APP|SENDER|CONTENT
+
+é responsabilidade exclusiva da camada de comunicação.
+
+A camada de captura nunca deverá montar manualmente mensagens do protocolo.
 
 ⸻
 
@@ -75,16 +105,21 @@ notification|whatsapp|Jose|Festa na floresta
 
 Aplicações Suportadas
 
-Os seguintes identificadores deverão ser utilizados:
+Aplicação Valor enviado
 
-Aplicação	Valor enviado
-WhatsApp	whatsapp
-Calendar	calendar
-Mail	mail
-Email	mail
-Messages	messages
-Mensagens	messages
-SMS	messages
+WhatsApp  whatsapp
+
+Calendar  calendar
+
+Mail  mail
+
+Email mail
+
+Messages  messages
+
+Mensagens messages
+
+SMS messages
 
 Toda aplicação não identificada deverá ser enviada como:
 
@@ -106,8 +141,11 @@ SENDER
 
 Nome do remetente.
 
-Quando não existir remetente, enviar o contexto (como horario ou data, ou nome de aplicativo) ou titulo da notificação.
-Caso não existir nenhum enviar uma string vazia.
+Quando não existir remetente, utilizar a seguinte ordem:
+
+1. Título da notificação.
+2. Contexto disponível (horário, data ou nome do aplicativo).
+3. String vazia.
 
 ⸻
 
@@ -115,14 +153,21 @@ CONTENT
 
 Conteúdo textual da notificação.
 
-Deve ser limitado a 30 caracteres, finalizar com ... quando ultrapassar 30 caracteres
+Deve ser limitado a 30 caracteres.
+
+Quando ultrapassar 30 caracteres deverá ser truncado e finalizado com:
+
+...
 
 Quando inexistente, enviar uma string vazia.
 
 ⸻
 
 Usar exemplo
+
 osascript -e 'display notification "Sua mensagem aqui" with title "Título da Notificação"'
+
+⸻
 
 Não faz parte
 
@@ -140,6 +185,7 @@ Critérios de Aceitação
 
 * O Companion solicita permissão de Accessibility quando necessário.
 * O watcher permanece ativo durante toda a execução da aplicação.
+* O watcher é inicializado apenas uma única vez.
 * Toda notificação recebida pelo macOS é capturada.
 * O aplicativo de origem é identificado corretamente.
 * O remetente é identificado quando disponível.
@@ -148,3 +194,11 @@ Critérios de Aceitação
 * Aplicações não mapeadas são enviadas como settings.
 * As notificações são enviadas para a ESP32 através da interface pública definida em 006_connection.md.
 * O módulo permanece desacoplado da camada de comunicação.
+* O módulo é validado em macOS real utilizando:
+  * osascript
+  * WhatsApp
+  * Messages
+  * Mail
+  * Calendar
+  * pelo menos uma aplicação não mapeada.
+* O HARNESS somente poderá ser considerado concluído após validação em hardware real, comprovando que a notificação foi capturada pelo macOS, convertida para o protocolo do K.O.R.E. e recebida corretamente pela ESP32.

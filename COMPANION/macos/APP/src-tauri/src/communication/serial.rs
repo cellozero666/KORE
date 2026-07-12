@@ -44,6 +44,20 @@ impl SerialTransport {
             connected: false,
         }
     }
+
+    /// Write-only send — does not wait for a response.
+    /// Used for fire-and-forget commands (e.g. notifications).
+    pub async fn send_raw(&mut self, data: &str) -> Result<(), String> {
+        let mutex = self
+            .port
+            .as_ref()
+            .ok_or_else(|| "Serial: not connected".to_string())?;
+        let mut port = mutex.lock().await;
+        let cmd = format!("{}\n", data);
+        port.write_all(cmd.as_bytes())
+            .map_err(|e| format!("Serial: write error: {}", e))?;
+        Ok(())
+    }
 }
 
 #[async_trait]

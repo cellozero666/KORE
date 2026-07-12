@@ -34,6 +34,26 @@ impl BleTransport {
             connected: false,
         }
     }
+
+    /// Write-only send — does not wait for a response notification.
+    /// Used for fire-and-forget commands (e.g. notifications).
+    pub async fn send_raw(&mut self, data: &str) -> Result<(), String> {
+        let peripheral = self
+            .peripheral
+            .as_ref()
+            .ok_or_else(|| "BLE: not connected".to_string())?;
+        let rx_char = self
+            .rx_char
+            .as_ref()
+            .ok_or_else(|| "BLE: RX characteristic not found".to_string())?;
+
+        peripheral
+            .write(rx_char, data.as_bytes(), WriteType::WithResponse)
+            .await
+            .map_err(|e| format!("BLE: write failed: {}", e))?;
+
+        Ok(())
+    }
 }
 
 #[async_trait]

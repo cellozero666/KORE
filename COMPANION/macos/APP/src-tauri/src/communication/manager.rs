@@ -100,6 +100,16 @@ impl CommunicationManager {
         Ok(())
     }
 
+    /// Fire-and-forget: writes the command without waiting for a response.
+    /// Used for notifications and other commands where the firmware does not reply.
+    pub async fn send_fire_forget(&mut self, command: &str) -> Result<(), String> {
+        match self.active {
+            Some(TransportType::Ble) => self.ble.send_raw(command).await,
+            Some(TransportType::Serial) => self.serial.send_raw(command).await,
+            None => Err("No active transport".to_string()),
+        }
+    }
+
     pub async fn send_command(&mut self, command: &str) -> Result<String, String> {
         match self.active {
             Some(TransportType::Ble) => {
