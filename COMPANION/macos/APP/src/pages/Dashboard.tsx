@@ -1,6 +1,10 @@
 import { useState, useRef, useCallback } from "react";
 import { useDashboard } from "../hooks/useDashboard";
 import { useSpotify, useGoogle } from "../state";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMicrochip, faClock, faWifi, faNetworkWired, faTerminal } from "@fortawesome/free-solid-svg-icons";
+import { faSpotify, faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { KoreIcon } from "../components/common/KoreIcon";
 import "../assets/css/Dashboard.css";
 
 function Dashboard() {
@@ -52,24 +56,24 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>K.O.R.E.</h1>
-        <span
-          className={`status-indicator ${connected ? "connected" : "disconnected"}`}
-        />
-        <span className="status-label">
-          {connected ? "Connected" : "Disconnected"}
-        </span>
+        <KoreIcon className={`dashboard-status-icon ${connected ? "connected" : "disconnected"}`} />
+        <div className="header-text">
+          <h1>K.O.R.E.</h1>
+          <span className={`status-label ${connected ? "connected" : "disconnected"}`}>
+            {connected ? "Connected" : "Disconnected"}
+          </span>
+        </div>
       </header>
 
       <section className="dashboard-section">
         <div className="info-row">
-          <span className="info-label">Firmware</span>
+          <span className="info-label"><FontAwesomeIcon icon={faMicrochip} /> Firmware</span>
           <span className="info-value">
             {firmwareVersionLoading ? "..." : (firmwareVersion ?? "---")}
           </span>
         </div>
         <div className="info-row">
-          <span className="info-label">Uptime</span>
+          <span className="info-label"><FontAwesomeIcon icon={faClock} /> Uptime</span>
           <span className="info-value">
             {uptimeLoading ? "..." : (uptime ?? "---")}
           </span>
@@ -80,7 +84,7 @@ function Dashboard() {
 
       <section className="dashboard-section">
         <div className="info-row">
-          <span className="info-label">Spotify</span>
+          <span className="info-label"><FontAwesomeIcon icon={faSpotify} /> Spotify</span>
           <span
             className={`info-value ${spotifyState.connected ? "status-connected" : "status-disconnected"}`}
           >
@@ -88,7 +92,7 @@ function Dashboard() {
           </span>
         </div>
         <div className="info-row">
-          <span className="info-label">Google</span>
+          <span className="info-label"><FontAwesomeIcon icon={faGoogle} /> Google</span>
           <span
             className={`info-value ${googleState.connected ? "status-connected" : "status-disconnected"}`}
           >
@@ -101,7 +105,7 @@ function Dashboard() {
 
       <section className="dashboard-section">
         <div className="info-row">
-          <span className="info-label">Wi-Fi</span>
+          <span className="info-label"><FontAwesomeIcon icon={faWifi} /> Wi-Fi</span>
           <span
             className={`info-value ${
               wifiStatus?.connected ? "status-connected" : "status-disconnected"
@@ -117,7 +121,7 @@ function Dashboard() {
           </span>
         </div>
         <div className="info-row">
-          <span className="info-label">IP</span>
+          <span className="info-label"><FontAwesomeIcon icon={faNetworkWired} /> IP</span>
           <span className="info-value">
             {wifiStatusLoading ? "..." : (wifiStatus?.ipAddress ?? "-")}
           </span>
@@ -127,7 +131,7 @@ function Dashboard() {
       <div className="dashboard-divider" />
 
       <section className="dashboard-section command-test">
-        <h3>Command Test</h3>
+        <h3><FontAwesomeIcon icon={faTerminal} /> Command Test</h3>
         <div className="command-input-row">
           <input
             ref={inputRef}

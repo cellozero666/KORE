@@ -1,4 +1,7 @@
 import { useSpotifyService } from "../hooks/useSpotify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { faBackward, faForward, faPlay, faPause, faPlug, faPlugCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/Spotify.css";
 
 function formatTime(ms: number): string {
@@ -15,45 +18,42 @@ function Spotify() {
 
   return (
     <div className="page spotify-page">
-      <h2>Spotify</h2>
+      <header className="spotify-header">
+        <h2>
+          <FontAwesomeIcon icon={faSpotify} /> Spotify
+        </h2>
+        <div className={`spotify-status ${connected ? "connected" : "disconnected"}`}>
+          {connected ? "Connected" : "Disconnected"}
+        </div>
+      </header>
 
       {/* Error */}
       {error && <div className="error">{error}</div>}
 
-      {/* Account */}
-      <div className="spotify-account">
-        <div className={`spotify-status ${connected ? "connected" : "disconnected"}`}>
-          {connected ? "Conectado" : "Desconectado"}
-        </div>
-        {user && (
-          <div className="spotify-user">
-            {user.image_url && (
-              <img
-                src={user.image_url}
-                alt={user.display_name}
-                className="spotify-avatar"
-              />
-            )}
-            <span className="spotify-name">{user.display_name}</span>
-          </div>
-        )}
-        <div className="spotify-actions">
-          {connected ? (
-            <button onClick={disconnect} disabled={loading}>
-              Desconectar
-            </button>
-          ) : (
-            <button onClick={connect} disabled={loading}>
-              {loading ? "Conectando..." : "Conectar ao Spotify"}
-            </button>
+      <div className="spotify-container">
+        {/* Account */}
+        <div className="spotify-account">
+          {user && (
+            <div className="spotify-user">
+              {user.image_url && (
+                <img
+                  src={user.image_url}
+                  alt={user.display_name}
+                  className="spotify-avatar"
+                />
+              )}
+              <span className="spotify-name">{user.display_name}</span>
+            </div>
           )}
+          <button className="spotify-connect-btn" onClick={connected ? disconnect : connect} disabled={loading}>
+            <FontAwesomeIcon icon={connected ? faPlugCircleXmark : faPlug} /> 
+            {loading ? "..." : connected ? "Disconnect" : "Connect"}
+          </button>
         </div>
-      </div>
 
-      {/* Playback */}
-      {playback && (
-        <div className="spotify-playback">
-          <div className="spotify-track-info">
+        {/* Playback */}
+        {playback && (
+          <div className="spotify-playback">
             {playback.album_art && (
               <img
                 src={playback.album_art}
@@ -61,62 +61,41 @@ function Spotify() {
                 className="spotify-album-art"
               />
             )}
+            
+            <div className="spotify-progress">
+              <div className="spotify-progress-bar">
+                <div
+                  className="spotify-progress-fill"
+                  style={{
+                    width: `${(playback.progress_ms / playback.duration_ms) * 100}%`,
+                  }}
+                />
+              </div>
+              <div className="spotify-progress-times">
+                <span>{formatTime(playback.progress_ms)}</span>
+                <span>{formatTime(playback.duration_ms)}</span>
+              </div>
+            </div>
+
             <div className="spotify-track-details">
               <div className="spotify-track-name">{playback.track}</div>
               <div className="spotify-artist-name">{playback.artist}</div>
               <div className="spotify-album-name">{playback.album}</div>
             </div>
-          </div>
 
-          {/* Progress */}
-          <div className="spotify-progress">
-            <div className="spotify-progress-bar">
-              <div
-                className="spotify-progress-fill"
-                style={{
-                  width: `${(playback.progress_ms / playback.duration_ms) * 100}%`,
-                }}
-              />
-            </div>
-            <div className="spotify-progress-times">
-              <span>{formatTime(playback.progress_ms)}</span>
-              <span>{formatTime(playback.duration_ms)}</span>
+            <div className="spotify-controls">
+              <button className="spotify-control-btn" onClick={previous}><FontAwesomeIcon icon={faBackward} /></button>
+              <button className="spotify-control-btn spotify-play-btn" onClick={playback.is_playing ? pause : play}>
+                <FontAwesomeIcon icon={playback.is_playing ? faPause : faPlay} />
+              </button>
+              <button className="spotify-control-btn" onClick={next}><FontAwesomeIcon icon={faForward} /></button>
             </div>
           </div>
-
-          {/* Controls */}
-          <div className="spotify-controls">
-            <button
-              className="spotify-control-btn"
-              onClick={previous}
-              title="Anterior"
-            >
-              ⏮
-            </button>
-            <button
-              className="spotify-control-btn spotify-play-btn"
-              onClick={playback.is_playing ? pause : play}
-              title={playback.is_playing ? "Pausar" : "Tocar"}
-            >
-              {playback.is_playing ? "⏸" : "▶"}
-            </button>
-            <button
-              className="spotify-control-btn"
-              onClick={next}
-              title="Próxima"
-            >
-              ⏭
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* No playback */}
-      {connected && !playback && (
-        <div className="spotify-empty">
-          <p>Nenhuma reprodução ativa</p>
-        </div>
-      )}
+      {connected && !playback && <div className="spotify-empty"><p>No active playback</p></div>}
     </div>
   );
 }

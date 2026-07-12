@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSettingsService, type CityOption } from "../hooks/useSettings";
 import { COUNTRIES } from "../utils/countries";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear, faLocationDot, faWifi, faLock, faSave, faPlug } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/Settings.css";
 
 function Settings() {
@@ -20,7 +22,6 @@ function Settings() {
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Sync state when location loads
   useEffect(() => {
     if (location) {
       setAutodetect(location.autodetect);
@@ -29,7 +30,6 @@ function Settings() {
     }
   }, [location]);
 
-  // City search with debounce
   const handleCitySearch = useCallback(
     (query: string) => {
       setCityQuery(query);
@@ -68,11 +68,6 @@ function Settings() {
       longitude: 0.0,
     };
     await saveLocation(config);
-    if (autodetect) {
-      setCity("");
-      setCityQuery("");
-      setCountry("");
-    }
   };
 
   const handleWifiConnect = async () => {
@@ -82,65 +77,56 @@ function Settings() {
 
   return (
     <div className="page settings-page">
-      <h2>Configurações</h2>
+      <header className="settings-header">
+        <h2>
+          <FontAwesomeIcon icon={faGear} /> Settings
+        </h2>
+      </header>
 
       {error && <div className="error">{error}</div>}
 
-      {loading && !location && (
-        <div className="weather-loading">Carregando...</div>
-      )}
+      <div className="settings-container">
+        {/* Location Section */}
+        <section className="settings-card">
+          <h3><FontAwesomeIcon icon={faLocationDot} /> Location</h3>
 
-      {/* Location */}
-      <div className="settings-section">
-        <h3>Localização</h3>
-
-        <div className="settings-checkbox">
-          <input
-            type="checkbox"
-            id="autodetect"
-            checked={autodetect}
-            onChange={(e) => setAutodetect(e.target.checked)}
-          />
-          <label htmlFor="autodetect">Detecção automática</label>
-        </div>
-
-        <div className="settings-field">
-          <label htmlFor="country">País</label>
-          <select
-            id="country"
-            value={country}
-            onChange={(e) => {
-              setCountry(e.target.value);
-              setCity("");
-              setCityQuery("");
-            }}
-            disabled={autodetect}
-          >
-            <option value="">Selecione um país</option>
-            {COUNTRIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="settings-field">
-          <label htmlFor="city">Cidade</label>
-          {autodetect ? (
+          <div className="settings-field checkbox">
             <input
-              type="text"
-              id="city"
-              value="Automático"
-              disabled
+              type="checkbox"
+              id="autodetect"
+              checked={autodetect}
+              onChange={(e) => setAutodetect(e.target.checked)}
             />
-          ) : (
+            <label htmlFor="autodetect">Auto Detect</label>
+          </div>
+
+          <div className="settings-field">
+            <label htmlFor="country">Country</label>
+            <select
+              id="country"
+              value={country}
+              onChange={(e) => {
+                setCountry(e.target.value);
+                setCity("");
+                setCityQuery("");
+              }}
+              disabled={autodetect}
+            >
+              <option value="">Select country</option>
+              {COUNTRIES.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="settings-field">
+            <label htmlFor="city">City</label>
             <div className="settings-city-search">
               <input
                 type="text"
                 id="city"
-                placeholder="Digite o nome da cidade..."
-                value={cityQuery || city}
+                placeholder="City name..."
+                value={autodetect ? "Automatic" : (cityQuery || city)}
                 onChange={(e) => {
                   setCity("");
                   handleCitySearch(e.target.value);
@@ -151,11 +137,10 @@ function Settings() {
                 onBlur={() => {
                   setTimeout(() => setShowResults(false), 200);
                 }}
+                disabled={autodetect}
               />
               {searching && (
-                <div className="settings-city-result" style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#1a1a1a", border: "1px solid #333", borderTop: "none", borderRadius: "0 0 6px 6px", padding: "0.6rem 0.75rem", fontSize: "0.9rem", color: "#888" }}>
-                  Buscando...
-                </div>
+                <div className="settings-city-result">Searching...</div>
               )}
               {showResults && !searching && (
                 <div className="settings-city-results">
@@ -172,51 +157,43 @@ function Settings() {
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </div>
 
-        <button
-          className="settings-btn settings-btn-primary"
-          onClick={handleSave}
-          disabled={loading}
-        >
-          {loading ? "Salvando..." : "Salvar Localização"}
-        </button>
-      </div>
+          <button className="settings-btn" onClick={handleSave} disabled={loading}>
+            <FontAwesomeIcon icon={faSave} /> {loading ? "Saving..." : "Save Location"}
+          </button>
+        </section>
 
-      {/* WiFi */}
-      <div className="settings-section">
-        <h3>Wi-Fi</h3>
+        {/* WiFi Section */}
+        <section className="settings-card">
+          <h3><FontAwesomeIcon icon={faWifi} /> Wi-Fi</h3>
 
-        <div className="settings-field">
-          <label htmlFor="wifi-ssid">SSID</label>
-          <input
-            type="text"
-            id="wifi-ssid"
-            value={wifiSsid}
-            onChange={(e) => setWifiSsid(e.target.value)}
-            placeholder="Nome da rede"
-          />
-        </div>
+          <div className="settings-field">
+            <label htmlFor="wifi-ssid">SSID</label>
+            <input
+              type="text"
+              id="wifi-ssid"
+              value={wifiSsid}
+              onChange={(e) => setWifiSsid(e.target.value)}
+              placeholder="Network name"
+            />
+          </div>
 
-        <div className="settings-field">
-          <label htmlFor="wifi-password">Senha</label>
-          <input
-            type="password"
-            id="wifi-password"
-            value={wifiPassword}
-            onChange={(e) => setWifiPassword(e.target.value)}
-            placeholder="Senha da rede"
-          />
-        </div>
+          <div className="settings-field">
+            <label htmlFor="wifi-password"><FontAwesomeIcon icon={faLock} /> Password</label>
+            <input
+              type="password"
+              id="wifi-password"
+              value={wifiPassword}
+              onChange={(e) => setWifiPassword(e.target.value)}
+              placeholder="Network password"
+            />
+          </div>
 
-        <button
-          className="settings-btn settings-btn-wifi"
-          onClick={handleWifiConnect}
-          disabled={loading || !wifiSsid || !wifiPassword}
-        >
-          {loading ? "Conectando..." : "Conectar Wi-Fi"}
-        </button>
+          <button className="settings-btn" onClick={handleWifiConnect} disabled={loading}>
+            <FontAwesomeIcon icon={faPlug} /> {loading ? "Connecting..." : "Connect"}
+          </button>
+        </section>
       </div>
     </div>
   );

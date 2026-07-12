@@ -1,3 +1,4 @@
+import { KoreIcon } from "./KoreIcon";
 import "../../assets/css/LoadingScreen.css";
 
 interface LoadingScreenProps {
@@ -16,12 +17,12 @@ function LoadingScreen({ error, onRetry }: LoadingScreenProps) {
           <p className="loading-error">{error}</p>
           {onRetry && (
             <button className="loading-retry" onClick={onRetry}>
-              Tentar novamente
+              Try Again
             </button>
           )}
         </>
       ) : (
-        <div className="loading-spinner" />
+        <KoreIcon className="loading-icon" />
       )}
     </div>
   );

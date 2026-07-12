@@ -1,4 +1,6 @@
 import { useWeatherService } from "../hooks/useWeather";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudSun, faTemperatureHigh, faTemperatureLow, faSync } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/Weather.css";
 
 function Weather() {
@@ -13,18 +15,22 @@ function Weather() {
 
   return (
     <div className="page weather-page">
-      <h2>Clima</h2>
+      <header className="weather-header">
+        <h2>
+          <FontAwesomeIcon icon={faCloudSun} /> Weather
+        </h2>
+      </header>
 
       {error && <div className="error">{error}</div>}
 
       {loading && !temperature && (
-        <div className="weather-loading">Carregando...</div>
+        <div className="weather-loading">Loading...</div>
       )}
 
       {temperature != null && (
-        <>
+        <div className="weather-container">
           <div className="weather-city">
-            {city ?? "Localização desconhecida"}
+            {city ?? "Unknown Location"}
           </div>
 
           <div className="weather-temp-display">
@@ -34,19 +40,23 @@ function Weather() {
 
           <div className="weather-details">
             <div className="weather-detail-item">
-              <span className="weather-detail-label">Máxima</span>
+              <span className="weather-detail-label">
+                <FontAwesomeIcon icon={faTemperatureHigh} /> High
+              </span>
               <span className="weather-detail-value">{maxDisplay}</span>
             </div>
             <div className="weather-detail-item">
-              <span className="weather-detail-label">Mínima</span>
+              <span className="weather-detail-label">
+                <FontAwesomeIcon icon={faTemperatureLow} /> Low
+              </span>
               <span className="weather-detail-value">{minDisplay}</span>
             </div>
           </div>
 
           <div className="weather-update">
-            Última atualização: {lastUpdate ?? "--"}
+            <FontAwesomeIcon icon={faSync} /> Last Update: {lastUpdate ?? "--"}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
