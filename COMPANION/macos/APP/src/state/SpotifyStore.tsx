@@ -1,29 +1,131 @@
-import { createContext, useContext, useReducer, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  type ReactNode,
+} from "react";
+import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 
-interface SpotifyState {}
+interface SpotifyUser {
+  id: string;
+  display_name: string;
+  image_url: string | null;
+}
 
-type SpotifyAction = never;
+interface SpotifyPlayback {
+  track: string;
+  artist: string;
+  album: string;
+  album_art: string | null;
+  progress_ms: number;
+  duration_ms: number;
+  is_playing: boolean;
+}
 
-const initialSpotifyState: SpotifyState = {};
+interface SpotifyStatusEvent {
+  connected: boolean;
+  user: SpotifyUser | null;
+  playback: SpotifyPlayback | null;
+}
+
+interface SpotifyState {
+  connected: boolean;
+  user: SpotifyUser | null;
+  playback: SpotifyPlayback | null;
+  loading: boolean;
+  error: string | null;
+}
+
+type SpotifyAction =
+  | { type: "SET_CONNECTED"; payload: boolean }
+  | { type: "SET_USER"; payload: SpotifyUser | null }
+  | { type: "SET_PLAYBACK"; payload: SpotifyPlayback | null }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null };
+
+const initialSpotifyState: SpotifyState = {
+  connected: false,
+  user: null,
+  playback: null,
+  loading: false,
+  error: null,
+};
 
 function spotifyReducer(
   state: SpotifyState,
-  _action: SpotifyAction
+  action: SpotifyAction,
 ): SpotifyState {
-  return state;
+  switch (action.type) {
+    case "SET_CONNECTED":
+      return { ...state, connected: action.payload };
+    case "SET_USER":
+      return { ...state, user: action.payload };
+    case "SET_PLAYBACK":
+      return { ...state, playback: action.payload };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
+    case "SET_ERROR":
+      return { ...state, error: action.payload };
+    default:
+      return state;
+  }
 }
 
 interface SpotifyContextValue {
   state: SpotifyState;
+  setConnected: (connected: boolean) => void;
+  setUser: (user: SpotifyUser | null) => void;
+  setPlayback: (playback: SpotifyPlayback | null) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
 }
 
 const SpotifyContext = createContext<SpotifyContextValue | null>(null);
 
 function SpotifyProvider({ children }: { children: ReactNode }) {
-  const [state] = useReducer(spotifyReducer, initialSpotifyState);
+  const [state, dispatch] = useReducer(spotifyReducer, initialSpotifyState);
+
+  useEffect(() => {
+    let unlisten: UnlistenFn | undefined;
+
+    async function setup() {
+      unlisten = await listen<SpotifyStatusEvent>("spotify-status", (event) => {
+        dispatch({ type: "SET_CONNECTED", payload: event.payload.connected });
+        dispatch({ type: "SET_USER", payload: event.payload.user });
+        dispatch({ type: "SET_PLAYBACK", payload: event.payload.playback });
+      });
+    }
+
+    setup();
+
+    return () => {
+      if (unlisten) {
+        unlisten();
+      }
+    };
+  }, []);
+
+  const value = useMemo<SpotifyContextValue>(
+    () => ({
+      state,
+      setConnected: (connected: boolean) =>
+        dispatch({ type: "SET_CONNECTED", payload: connected }),
+      setUser: (user: SpotifyUser | null) =>
+        dispatch({ type: "SET_USER", payload: user }),
+      setPlayback: (playback: SpotifyPlayback | null) =>
+        dispatch({ type: "SET_PLAYBACK", payload: playback }),
+      setLoading: (loading: boolean) =>
+        dispatch({ type: "SET_LOADING", payload: loading }),
+      setError: (error: string | null) =>
+        dispatch({ type: "SET_ERROR", payload: error }),
+    }),
+    [state],
+  );
 
   return (
-    <SpotifyContext.Provider value={{ state }}>
+    <SpotifyContext.Provider value={value}>
       {children}
     </SpotifyContext.Provider>
   );
@@ -38,3 +140,4 @@ function useSpotify(): SpotifyContextValue {
 }
 
 export { SpotifyProvider, useSpotify };
+export type { SpotifyUser, SpotifyPlayback, SpotifyState };

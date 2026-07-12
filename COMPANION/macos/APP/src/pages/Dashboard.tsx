@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { useDashboard } from "../hooks/useDashboard";
+import { useSpotify, useGoogle } from "../state";
 import "../assets/css/Dashboard.css";
 
 function Dashboard() {
@@ -13,6 +14,8 @@ function Dashboard() {
     connected,
     sendRawCommand,
   } = useDashboard();
+  const { state: spotifyState } = useSpotify();
+  const { state: googleState } = useGoogle();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [commandResponse, setCommandResponse] = useState<string | null>(null);
@@ -78,11 +81,19 @@ function Dashboard() {
       <section className="dashboard-section">
         <div className="info-row">
           <span className="info-label">Spotify</span>
-          <span className="info-value status-disconnected">Disconnected</span>
+          <span
+            className={`info-value ${spotifyState.connected ? "status-connected" : "status-disconnected"}`}
+          >
+            {spotifyState.connected ? "Connected" : "Disconnected"}
+          </span>
         </div>
         <div className="info-row">
           <span className="info-label">Google</span>
-          <span className="info-value status-disconnected">Disconnected</span>
+          <span
+            className={`info-value ${googleState.connected ? "status-connected" : "status-disconnected"}`}
+          >
+            {googleState.connected ? "Connected" : "Disconnected"}
+          </span>
         </div>
       </section>
 

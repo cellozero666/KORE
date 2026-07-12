@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>com.kore.companion.spotify</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>kore</string>
+      </array>
+    </dict>
+  </array>
+  <key>NSBluetoothAlwaysUsageDescription</key>
+  <string>K.O.R.E. Companion uses Bluetooth to communicate with the K.O.R.E. OS device.</string>
+  <key>NSBluetoothPeripheralUsageDescription</key>
+  <string>K.O.R.E. Companion uses Bluetooth to communicate with the K.O.R.E. OS device.</string>
+</dict>
+</plist>
