@@ -78,23 +78,4 @@ pub struct GoogleProfile {
     pub picture: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GmailCheckDiagnostic {
-    pub timestamp: String,
-    pub endpoint: String,
-    pub query: String,
-    pub messages_found: usize,
-    pub message_ids: Vec<String>,
-    pub messages: Vec<DiagnosticMessage>,
-    pub payloads: Vec<String>,
-    pub send_fire_forget_called: bool,
-    pub peripheral_write_result: String,
-    pub error: Option<String>,
-}
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DiagnosticMessage {
-    pub id: String,
-    pub from: String,
-    pub subject: String,
-}

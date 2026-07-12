@@ -9,7 +9,9 @@ mod state;
 
 use state::connection::AppState;
 use state::google::GoogleState;
+use state::settings::SettingsState;
 use state::spotify::SpotifyState;
+use state::weather::WeatherState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -23,6 +25,8 @@ pub fn run() {
         .manage(AppState::new())
         .manage(SpotifyState::new())
         .manage(GoogleState::new())
+        .manage(SettingsState::new())
+        .manage(WeatherState::new())
         .invoke_handler(tauri::generate_handler![
             commands::connection::connect,
             commands::connection::disconnect,
@@ -38,14 +42,22 @@ pub fn run() {
             commands::google::google_connect,
             commands::google::google_disconnect,
             commands::google::google_status,
-            commands::google::gmail_check_diagnostic,
+            commands::weather::weather_fetch,
+            commands::weather::weather_status,
+            commands::weather::weather_set_location,
+            commands::settings::settings_get,
+            commands::settings::settings_save_location,
+            commands::settings::settings_search_cities,
+            commands::settings::settings_wifi_connect,
         ])
         .setup(|app| {
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
                 services::notifications::init(handle.clone()).await;
                 services::spotify::init(handle.clone()).await;
-                services::google::init(handle).await;
+                services::google::init(handle.clone()).await;
+                services::settings::init(handle.clone()).await;
+                services::weather::init(handle).await;
             });
             Ok(())
         })

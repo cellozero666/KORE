@@ -175,15 +175,20 @@ async fn fetch_user_profile(google_state: &GoogleState) -> Result<GoogleUser, St
     })
 }
 
-async fn fetch_new_emails(
+async fn fetch_new_email(
     google_state: &GoogleState,
-) -> Result<Vec<(String, String, String)>, String> {
+    last_id: &str,
+) -> Result<Option<(String, String, String)>, String> {
     let token = ensure_token(google_state).await?;
     let client = reqwest::Client::new();
 
     let list_resp = client
         .get(format!("{}/users/me/messages", GMAIL_BASE))
-        .query(&[("q", "is:unread"), ("fields", "messages(id)")])
+        .query(&[
+            ("q", "is:unread"),
+            ("maxResults", "1"),
+            ("fields", "messages(id)"),
+        ])
         .bearer_auth(&token)
         .send()
         .await
@@ -200,53 +205,48 @@ async fn fetch_new_emails(
         .await
         .map_err(|e| format!("gmail list parse failed: {}", e))?;
 
-    let messages = match list.messages {
+    let msg = match list.messages.and_then(|m| m.into_iter().next()) {
         Some(m) => m,
-        None => return Ok(Vec::new()),
+        None => return Ok(None),
     };
 
-    let mut results = Vec::new();
-    for msg in &messages {
-        let detail_resp = client
-            .get(format!("{}/users/me/messages/{}", GMAIL_BASE, msg.id))
-            .query(&[
-                ("format", "metadata"),
-                ("metadataHeaders", "From"),
-                ("metadataHeaders", "Subject"),
-            ])
-            .bearer_auth(&token)
-            .send()
-            .await
-            .map_err(|e| format!("gmail detail failed: {}", e))?;
-
-        if !detail_resp.status().is_success() {
-            continue;
-        }
-
-        let detail = detail_resp
-            .json::<GmailMessageResponse>()
-            .await
-            .map_err(|e| format!("gmail detail parse failed: {}", e))?;
-
-        let mut sender = String::new();
-        let mut subject = String::new();
-
-        for header in detail.payload.headers {
-            match header.name.as_str() {
-                "From" => {
-                    sender = header.value;
-                }
-                "Subject" => {
-                    subject = header.value;
-                }
-                _ => {}
-            }
-        }
-
-        results.push((msg.id.clone(), sender, subject));
+    if msg.id == last_id {
+        return Ok(None);
     }
 
-    Ok(results)
+    let detail_resp = client
+        .get(format!("{}/users/me/messages/{}", GMAIL_BASE, msg.id))
+        .query(&[
+            ("format", "metadata"),
+            ("metadataHeaders", "From"),
+            ("metadataHeaders", "Subject"),
+        ])
+        .bearer_auth(&token)
+        .send()
+        .await
+        .map_err(|e| format!("gmail detail failed: {}", e))?;
+
+    if !detail_resp.status().is_success() {
+        return Err(format!("gmail detail HTTP {}", detail_resp.status()));
+    }
+
+    let detail = detail_resp
+        .json::<GmailMessageResponse>()
+        .await
+        .map_err(|e| format!("gmail detail parse failed: {}", e))?;
+
+    let mut sender = String::new();
+    let mut subject = String::new();
+
+    for header in detail.payload.headers {
+        match header.name.as_str() {
+            "From" => sender = header.value,
+            "Subject" => subject = header.value,
+            _ => {}
+        }
+    }
+
+    Ok(Some((msg.id, sender, subject)))
 }
 
 async fn fetch_calendar_events(
@@ -455,34 +455,21 @@ fn start_gmail_watcher(app_handle: tauri::AppHandle) {
                 inner.last_email_id.clone()
             };
 
-            match fetch_new_emails(&google_state).await {
-                Ok(emails) => {
-                    for (id, sender, subject) in &emails {
-                        if *id == last_id {
-                            continue;
-                        }
+            match fetch_new_email(&google_state, &last_id).await {
+                Ok(Some((id, sender, subject))) => {
+                    info!("[GOOGLE] new email from={}, subject={}", sender, subject);
 
-                        info!(
-                            "[GOOGLE] new email from={}, subject={}",
-                            sender, subject
-                        );
+                    let msg = format_command("notification", &["mail", &sender, &subject]);
 
-                        let msg = format_command(
-                            "notification",
-                            &["mail", sender, subject],
-                        );
-
-                        let state = app_handle.state::<AppState>();
-                        if let Err(e) = state.send_fire_forget(msg).await {
-                            warn!("[GOOGLE] firmware write failed: {}", e);
-                        }
+                    let state = app_handle.state::<AppState>();
+                    if let Err(e) = state.send_fire_forget(msg).await {
+                        warn!("[GOOGLE] firmware write failed: {}", e);
                     }
 
-                    if let Some((new_id, _, _)) = emails.first() {
-                        let mut inner = google_state.inner.lock().await;
-                        inner.last_email_id = new_id.clone();
-                    }
+                    let mut inner = google_state.inner.lock().await;
+                    inner.last_email_id = id;
                 }
+                Ok(None) => {}
                 Err(e) => {
                     warn!("[GOOGLE] Gmail watcher error: {}", e);
                 }
@@ -831,138 +818,6 @@ pub async fn init(app_handle: tauri::AppHandle) {
     }
 
     info!("[GOOGLE] service initialized");
-}
-
-// ─── Diagnostic ───────────────────────────────────────────────────────────────
-
-use crate::models::google::{DiagnosticMessage, GmailCheckDiagnostic};
-
-async fn fetch_message_ids_only(
-    google_state: &GoogleState,
-) -> Result<Vec<String>, String> {
-    let token = ensure_token(google_state).await?;
-    let client = reqwest::Client::new();
-
-    let resp = client
-        .get(format!("{}/users/me/messages", GMAIL_BASE))
-        .query(&[("q", "is:unread"), ("fields", "messages(id)")])
-        .bearer_auth(&token)
-        .send()
-        .await
-        .map_err(|e| format!("gmail list failed: {}", e))?;
-
-    if !resp.status().is_success() {
-        let status = resp.status();
-        let body = resp.text().await.unwrap_or_default();
-        return Err(format!("gmail list HTTP {} body: {}", status, body));
-    }
-
-    let list = resp
-        .json::<GmailListResponse>()
-        .await
-        .map_err(|e| format!("gmail list parse failed: {}", e))?;
-
-    Ok(list.messages.unwrap_or_default().into_iter().map(|m| m.id).collect())
-}
-
-pub async fn gmail_check_diagnostic(
-    google_state: &GoogleState,
-    app_handle: &tauri::AppHandle,
-) -> GmailCheckDiagnostic {
-    let last_id = {
-        let inner = google_state.inner.lock().await;
-        inner.last_email_id.clone()
-    };
-
-    let endpoint = format!("{}/users/me/messages", GMAIL_BASE);
-    let query = "is:unread".to_string();
-
-    info!("[DIAG] === Gmail Check Diagnostic ===");
-    info!("[DIAG] 1. last_email_id: {:?}", last_id);
-    info!("[DIAG] 2. Endpoint: {}", endpoint);
-    info!("[DIAG] 2. Query: q={}", query);
-
-    let message_ids = match fetch_message_ids_only(google_state).await {
-        Ok(ids) => ids,
-        Err(e) => {
-            warn!("[DIAG] ID fetch failed: {}", e);
-            Vec::new()
-        }
-    };
-    info!("[DIAG] 4. IDs: {:?}", message_ids);
-
-    match fetch_new_emails(google_state).await {
-        Ok(emails) => {
-            info!("[DIAG] 3. Messages returned: {}", emails.len());
-
-            let diagnostic_messages: Vec<DiagnosticMessage> = emails
-                .into_iter()
-                .map(|(id, sender, subject)| {
-                    info!("[DIAG] 5. From: {} | Subject: {}", sender, subject);
-                    DiagnosticMessage {
-                        id: id.clone(),
-                        from: sender.clone(),
-                        subject: subject.clone(),
-                    }
-                })
-                .collect();
-
-            let mut payloads = Vec::new();
-            let mut send_called = false;
-            let mut write_result = "not called".to_string();
-
-            for msg in &diagnostic_messages {
-                let payload = format_command(
-                    "notification",
-                    &["mail", &msg.from, &msg.subject],
-                );
-                info!("[DIAG] 6. Payload generated: {}", payload);
-                payloads.push(payload.clone());
-
-                let state = app_handle.state::<AppState>();
-                send_called = true;
-                info!("[DIAG] 7. send_fire_forget() called");
-                match state.send_fire_forget(payload).await {
-                    Ok(()) => {
-                        info!("[DIAG] 8. peripheral.write() returned Ok");
-                        write_result = "Ok".to_string();
-                    }
-                    Err(e) => {
-                        warn!("[DIAG] 8. peripheral.write() failed: {}", e);
-                        write_result = format!("Err({})", e);
-                    }
-                }
-            }
-
-            GmailCheckDiagnostic {
-                timestamp: last_id,
-                endpoint,
-                query,
-                messages_found: diagnostic_messages.len(),
-                message_ids,
-                messages: diagnostic_messages,
-                payloads,
-                send_fire_forget_called: send_called,
-                peripheral_write_result: write_result,
-                error: None,
-            }
-        }
-        Err(e) => {
-            warn!("[DIAG] Error: {}", e);
-            GmailCheckDiagnostic {
-                timestamp: last_id,
-                endpoint,
-                query,
-                messages_found: 0,
-                message_ids,
-                messages: Vec::new(),
-                payloads: Vec::new(),
-                send_fire_forget_called: false,
-                peripheral_write_result: "not called".to_string(),
-                error: Some(e),
-            }
-        }
-    }
 }
 
 fn parse_redirect_port(redirect_uri: &str) -> Result<u16, String> {
