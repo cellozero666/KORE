@@ -203,16 +203,14 @@ async fn fetch_user_profile(
 
     Ok(SpotifyUser {
         id: profile.id,
-        display_name: profile.display_name.unwrap_or_else(|| "Unknown".to_string()),
+        display_name: profile
+            .display_name
+            .unwrap_or_else(|| "Unknown".to_string()),
         image_url: profile.images.into_iter().next().map(|img| img.url),
     })
 }
 
-fn parse_track_response(
-    progress_ms: u64,
-    is_playing: bool,
-    item: ApiTrackItem,
-) -> SpotifyPlayback {
+fn parse_track_response(progress_ms: u64, is_playing: bool, item: ApiTrackItem) -> SpotifyPlayback {
     let artist = item
         .artists
         .into_iter()
@@ -382,10 +380,7 @@ pub async fn generate_auth_url(spotify_state: &SpotifyState) -> Result<String, S
         .collect::<Vec<_>>()
         .join("&");
 
-    Ok(format!(
-        "{}/authorize?{}",
-        SPOTIFY_ACCOUNTS_BASE, query
-    ))
+    Ok(format!("{}/authorize?{}", SPOTIFY_ACCOUNTS_BASE, query))
 }
 
 pub async fn handle_callback(
@@ -495,19 +490,16 @@ async fn update_playback_and_sync(spotify_state: &SpotifyState, app_handle: &tau
         }
     };
 
-    let was_playing = {
+    let (was_playing, track_changed) = {
         let inner = spotify_state.inner.lock().await;
-        inner.was_playing
+        let track_changed = match (&inner.playback, &playback) {
+            (Some(old), Some(new)) => old.track != new.track,
+            _ => true,
+        };
+        (inner.was_playing, track_changed)
     };
 
     let is_playing = playback.as_ref().map(|p| p.is_playing).unwrap_or(false);
-    let track_changed = {
-        let inner = spotify_state.inner.lock().await;
-        match (&inner.playback, &playback) {
-            (Some(old), Some(new)) => old.track != new.track,
-            _ => true,
-        }
-    };
 
     // Sync with firmware
     let state_lock = app_handle.state::<AppState>();

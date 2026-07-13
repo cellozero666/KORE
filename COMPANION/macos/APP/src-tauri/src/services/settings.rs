@@ -20,16 +20,14 @@ async fn save(app_handle: &tauri::AppHandle, config: &SettingsConfig) -> Result<
         .path()
         .app_data_dir()
         .map_err(|e| format!("cannot get app data dir: {}", e))?;
-    std::fs::create_dir_all(&path)
-        .map_err(|e| format!("cannot create app data dir: {}", e))?;
+    std::fs::create_dir_all(&path).map_err(|e| format!("cannot create app data dir: {}", e))?;
 
     let mut file_name = path;
     file_name.push("settings.json");
 
     let data = serde_json::to_string_pretty(config)
         .map_err(|e| format!("cannot serialize settings: {}", e))?;
-    std::fs::write(&file_name, &data)
-        .map_err(|e| format!("cannot write settings file: {}", e))?;
+    std::fs::write(&file_name, &data).map_err(|e| format!("cannot write settings file: {}", e))?;
 
     info!("[SETTINGS] saved to {:?}", file_name);
     Ok(())
@@ -48,9 +46,12 @@ pub async fn save_location(
     app_handle: &tauri::AppHandle,
     config: &LocationConfig,
 ) -> Result<(), String> {
-    save(app_handle, &SettingsConfig {
-        location: config.clone(),
-    })
+    save(
+        app_handle,
+        &SettingsConfig {
+            location: config.clone(),
+        },
+    )
     .await
 }
 

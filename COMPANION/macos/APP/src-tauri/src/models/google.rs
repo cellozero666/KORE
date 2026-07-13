@@ -77,5 +77,3 @@ pub struct GoogleProfile {
     pub email: Option<String>,
     pub picture: Option<String>,
 }
-
-

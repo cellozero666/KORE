@@ -60,8 +60,6 @@ function googleReducer(
 
 interface GoogleContextValue {
   state: GoogleState;
-  setConnected: (connected: boolean) => void;
-  setUser: (user: GoogleUser | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
@@ -93,10 +91,6 @@ function GoogleProvider({ children }: { children: ReactNode }) {
   const value = useMemo<GoogleContextValue>(
     () => ({
       state,
-      setConnected: (connected: boolean) =>
-        dispatch({ type: "SET_CONNECTED", payload: connected }),
-      setUser: (user: GoogleUser | null) =>
-        dispatch({ type: "SET_USER", payload: user }),
       setLoading: (loading: boolean) =>
         dispatch({ type: "SET_LOADING", payload: loading }),
       setError: (error: string | null) =>
@@ -121,4 +115,3 @@ function useGoogle(): GoogleContextValue {
 }
 
 export { GoogleProvider, useGoogle };
-export type { GoogleUser, GoogleState };

@@ -47,7 +47,7 @@ impl CommunicationManager {
         match self.try_ble().await {
             Ok(status) => {
                 info!("BLE connected via {:?}", status.transport);
-                return Ok(status);
+                Ok(status)
             }
             Err(ble_err) => {
                 warn!("BLE failed: {}", ble_err);
@@ -56,7 +56,7 @@ impl CommunicationManager {
                 match self.try_serial().await {
                     Ok(status) => {
                         info!("Serial connected via {:?}", status.transport);
-                        return Ok(status);
+                        Ok(status)
                     }
                     Err(serial_err) => {
                         let msg = format!("BLE: {}. Serial: {}", ble_err, serial_err);
@@ -64,7 +64,7 @@ impl CommunicationManager {
                         self.state = ConnectionState::Error;
                         self.active = None;
                         self.error_message = Some(msg.clone());
-                        return Err(msg);
+                        Err(msg)
                     }
                 }
             }

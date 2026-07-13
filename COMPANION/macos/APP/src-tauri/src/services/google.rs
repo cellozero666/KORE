@@ -11,8 +11,8 @@ use crate::communication::protocol::format_command;
 use crate::config::{GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI};
 use crate::events::google;
 use crate::models::google::{
-    CalendarListResponse, GmailListResponse, GmailMessageResponse,
-    GoogleProfile, GoogleStatus, GoogleTokenResponse, GoogleUser,
+    CalendarListResponse, GmailListResponse, GmailMessageResponse, GoogleProfile, GoogleStatus,
+    GoogleTokenResponse, GoogleUser,
 };
 use crate::state::connection::AppState;
 use crate::state::google::GoogleState;
@@ -329,9 +329,7 @@ pub async fn start_local_server_and_wait_for_code(
                     .map(|(_, v)| v.to_string())
                     .unwrap_or_default();
 
-                if let Some((_, code_val)) =
-                    parsed.query_pairs().find(|(k, _)| k == "code")
-                {
+                if let Some((_, code_val)) = parsed.query_pairs().find(|(k, _)| k == "code") {
                     if state_param == *expected_clone {
                         let code = code_val.to_string();
                         let mut res = result_clone.try_lock().ok();
@@ -340,8 +338,7 @@ pub async fn start_local_server_and_wait_for_code(
                         }
 
                         let response = tiny_http::Response::from_string(
-                            "Authorization successful! You can close this window."
-                                .to_string(),
+                            "Authorization successful! You can close this window.".to_string(),
                         )
                         .with_status_code(200);
                         let _ = request.respond(response);
@@ -351,10 +348,8 @@ pub async fn start_local_server_and_wait_for_code(
             }
 
             // Rejeitar qualquer outra requisição
-            let response = tiny_http::Response::from_string(
-                "Invalid request".to_string(),
-            )
-            .with_status_code(400);
+            let response = tiny_http::Response::from_string("Invalid request".to_string())
+                .with_status_code(400);
             let _ = request.respond(response);
         }
     });
@@ -365,8 +360,7 @@ pub async fn start_local_server_and_wait_for_code(
 
     let result_value = loop {
         if start.elapsed() > timeout {
-            return Err("OAuth timeout: no callback received within 60 seconds"
-                .to_string());
+            return Err("OAuth timeout: no callback received within 60 seconds".to_string());
         }
 
         let res = result.try_lock().ok();
@@ -405,19 +399,14 @@ fn start_gmail_watcher(app_handle: tauri::AppHandle) {
             tokio::time::sleep(std::time::Duration::from_secs(180)).await;
 
             let google_state = app_handle.state::<GoogleState>();
-            let is_connected = {
+            let (is_connected, last_id) = {
                 let inner = google_state.inner.lock().await;
-                inner.connected
+                (inner.connected, inner.last_email_id.clone())
             };
 
             if !is_connected {
                 continue;
             }
-
-            let last_id = {
-                let inner = google_state.inner.lock().await;
-                inner.last_email_id.clone()
-            };
 
             match fetch_new_email(&google_state, &last_id).await {
                 Ok(Some((id, sender, subject))) => {
@@ -449,19 +438,14 @@ fn start_calendar_watcher(app_handle: tauri::AppHandle) {
             tokio::time::sleep(std::time::Duration::from_secs(180)).await;
 
             let google_state = app_handle.state::<GoogleState>();
-            let is_connected = {
+            let (is_connected, last_check) = {
                 let inner = google_state.inner.lock().await;
-                inner.connected
+                (inner.connected, inner.last_calendar_check.clone())
             };
 
             if !is_connected {
                 continue;
             }
-
-            let last_check = {
-                let inner = google_state.inner.lock().await;
-                inner.last_calendar_check.clone()
-            };
 
             match fetch_calendar_events(&google_state, &last_check).await {
                 Ok(events) => {
@@ -473,14 +457,10 @@ fn start_calendar_watcher(app_handle: tauri::AppHandle) {
                             organizer, summary
                         );
 
-                        let msg = format_command(
-                            "notification",
-                            &["calendar", organizer, summary],
-                        );
+                        let msg = format_command("notification", &["calendar", organizer, summary]);
 
                         // Calendar: defer de 500ms validado no HARNESS-008
-                        tokio::time::sleep(std::time::Duration::from_millis(500))
-                            .await;
+                        tokio::time::sleep(std::time::Duration::from_millis(500)).await;
 
                         let state = app_handle.state::<AppState>();
                         if let Err(e) = state.send_fire_forget(msg).await {
@@ -503,9 +483,7 @@ fn start_calendar_watcher(app_handle: tauri::AppHandle) {
 
 fn chrono_now_rfc3339() -> String {
     // ISO 8601 / RFC 3339 format without external chrono crate
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap();
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
     let secs = now.as_secs();
     // Simple formatting: 2026-07-11T21:33:57Z
     let days = secs / 86400;
@@ -557,7 +535,7 @@ fn days_to_date(days: u64) -> (u64, u64, u64) {
 }
 
 fn is_leap(year: u64) -> bool {
-    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
 }
 
 // ─── Persistence ──────────────────────────────────────────────────────────────
@@ -566,8 +544,7 @@ async fn load_refresh_token(app_handle: &tauri::AppHandle) -> Option<String> {
     let mut path = app_handle.path().app_data_dir().ok()?;
     path.push("google_token.json");
     let data = std::fs::read_to_string(&path).ok()?;
-    let file: crate::models::google::GoogleTokenFile =
-        serde_json::from_str(&data).ok()?;
+    let file: crate::models::google::GoogleTokenFile = serde_json::from_str(&data).ok()?;
     Some(file.refresh_token)
 }
 
@@ -630,10 +607,7 @@ pub async fn connect(
             .collect::<Vec<_>>()
             .join("&");
 
-        format!(
-            "{}/o/oauth2/v2/auth?{}",
-            GOOGLE_ACCOUNTS_BASE, query
-        )
+        format!("{}/o/oauth2/v2/auth?{}", GOOGLE_ACCOUNTS_BASE, query)
     };
 
     // Open auth URL in browser
@@ -785,8 +759,8 @@ pub async fn init(app_handle: tauri::AppHandle) {
 }
 
 fn parse_redirect_port(redirect_uri: &str) -> Result<u16, String> {
-    let parsed = url::Url::parse(redirect_uri)
-        .map_err(|e| format!("invalid redirect URI: {}", e))?;
+    let parsed =
+        url::Url::parse(redirect_uri).map_err(|e| format!("invalid redirect URI: {}", e))?;
     parsed
         .port()
         .ok_or_else(|| "redirect URI must include a port number".to_string())

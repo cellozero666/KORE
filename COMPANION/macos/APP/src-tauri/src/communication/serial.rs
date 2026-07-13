@@ -97,9 +97,7 @@ impl Transport for SerialTransport {
                     let mut buf = [0u8; 256];
                     match port.read(&mut buf) {
                         Ok(size) => {
-                            let response = String::from_utf8_lossy(&buf[..size])
-                                .trim()
-                                .to_string();
+                            let response = String::from_utf8_lossy(&buf[..size]).trim().to_string();
 
                             if response.contains("KORE_COMPANION") {
                                 info!("[SERIAL] K.O.R.E. found on '{}'!", port_name);
@@ -157,5 +155,4 @@ impl Transport for SerialTransport {
     fn is_connected(&self) -> bool {
         self.connected
     }
-
 }

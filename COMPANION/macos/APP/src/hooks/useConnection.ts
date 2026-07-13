@@ -26,7 +26,7 @@ export function useConnection() {
       setError(String(err));
       setLoading(false);
     }
-  }, [setConnected, setLoading, setError]);
+  }, [setLoading, setError]);
 
   useEffect(() => {
     let unlisten: UnlistenFn | undefined;

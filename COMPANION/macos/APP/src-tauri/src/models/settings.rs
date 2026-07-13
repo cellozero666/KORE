@@ -21,17 +21,9 @@ impl Default for LocationConfig {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SettingsConfig {
     pub location: LocationConfig,
-}
-
-impl Default for SettingsConfig {
-    fn default() -> Self {
-        SettingsConfig {
-            location: LocationConfig::default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

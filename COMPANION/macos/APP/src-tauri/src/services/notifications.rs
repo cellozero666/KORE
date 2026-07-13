@@ -1,6 +1,6 @@
+use log::{info, warn};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
-use log::{info, warn};
 use tauri::Manager;
 use tokio::sync::mpsc;
 
@@ -24,7 +24,11 @@ impl CapturedNotification {
             raw_title.to_string()
         };
         let content = truncate(raw_body, 30);
-        Self { app, sender, content }
+        Self {
+            app,
+            sender,
+            content,
+        }
     }
 
     pub fn to_protocol_string(&self) -> String {

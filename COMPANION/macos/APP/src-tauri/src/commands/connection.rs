@@ -28,6 +28,8 @@ pub async fn send_command(
 }
 
 #[command]
-pub async fn get_connection_status(state: tauri::State<'_, AppState>) -> Result<ConnectionStatus, String> {
+pub async fn get_connection_status(
+    state: tauri::State<'_, AppState>,
+) -> Result<ConnectionStatus, String> {
     Ok(state.status().await)
 }

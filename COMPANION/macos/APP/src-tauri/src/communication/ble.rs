@@ -94,9 +94,10 @@ impl Transport for BleTransport {
 
         let peripheral = match tokio::time::timeout(Duration::from_secs(10), async {
             loop {
-                let peripherals = adapter.peripherals().await.map_err(|e| {
-                    format!("BLE: peripheral query failed: {}", e)
-                })?;
+                let peripherals = adapter
+                    .peripherals()
+                    .await
+                    .map_err(|e| format!("BLE: peripheral query failed: {}", e))?;
                 if let Some(p) = peripherals.into_iter().next() {
                     return Ok::<_, String>(p);
                 }
@@ -174,7 +175,6 @@ impl Transport for BleTransport {
                     while let Some(data) = stream.next().await {
                         if let Ok(text) = String::from_utf8(data.value) {
                             let trimmed = text.trim().to_string();
-                            info!("[BLE] notification received: '{}'", trimmed);
                             if notification_tx.send(trimmed).await.is_err() {
                                 break;
                             }
@@ -251,5 +251,4 @@ impl Transport for BleTransport {
     fn is_connected(&self) -> bool {
         self.connected
     }
-
 }

@@ -75,7 +75,6 @@ export function useDashboard() {
     wifiStatus: dashboardState.wifiStatus,
     wifiStatusLoading: dashboardState.wifiStatusLoading,
     connected: appState.connected,
-    refresh,
     sendRawCommand,
   };
 }

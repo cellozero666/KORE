@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useWeather } from "../state";
 
@@ -122,53 +122,14 @@ export function useWeatherService() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetch = useCallback(
-    async (latitude?: number, longitude?: number, cityName?: string) => {
-      setLoading(true);
-      setError(null);
-      try {
-        await invoke("weather_fetch", {
-          latitude: latitude ?? null,
-          longitude: longitude ?? null,
-          city: cityName ?? null,
-        });
-      } catch (err) {
-        setError(String(err));
-      }
-    },
-    [setLoading, setError],
-  );
-
-  const setLocation = useCallback(
-    async (cityName: string, latitude: number, longitude: number) => {
-      setLoading(true);
-      setError(null);
-      try {
-        await invoke("weather_set_location", {
-          city: cityName,
-          latitude,
-          longitude,
-        });
-      } catch (err) {
-        setError(String(err));
-      }
-    },
-    [setLoading, setError],
-  );
-
   return {
     city,
     temperature: data?.temperature ?? null,
     maxTemperature: data?.max_temperature ?? null,
     minTemperature: data?.min_temperature ?? null,
     condition,
-    code: data?.weather_code ?? null,
     lastUpdate: last_update,
     loading: state.loading,
     error: state.error,
-    fetch,
-    setLocation,
   };
 }
-
-export type { WeatherData } from "../state/WeatherStore";

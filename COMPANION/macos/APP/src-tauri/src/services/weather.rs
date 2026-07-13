@@ -5,9 +5,7 @@ use tauri::Manager;
 
 use crate::communication::protocol::format_command;
 use crate::events::weather;
-use crate::models::weather::{
-    IpInfoResponse, OpenMeteoResponse, WeatherData, WeatherStatus,
-};
+use crate::models::weather::{IpInfoResponse, OpenMeteoResponse, WeatherData, WeatherStatus};
 use crate::state::connection::AppState;
 use crate::state::settings::SettingsState;
 use crate::state::weather::WeatherState;
@@ -117,7 +115,16 @@ fn build_payload(city: &str, data: &WeatherData) -> String {
     let hi = data.max_temperature.round() as i64;
     let low = data.min_temperature.round() as i64;
 
-    format_command("weather", &[city, &temp.to_string(), &hi.to_string(), &low.to_string(), &icon.to_string()])
+    format_command(
+        "weather",
+        &[
+            city,
+            &temp.to_string(),
+            &hi.to_string(),
+            &low.to_string(),
+            &icon.to_string(),
+        ],
+    )
 }
 
 // ─── Sync to firmware ────────────────────────────────────────────────────────
@@ -213,9 +220,7 @@ async fn fetch_and_sync(
 }
 
 fn current_time_string() -> String {
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap();
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
     let secs = now.as_secs();
     let hours = (secs / 3600) % 24;
     let minutes = (secs / 60) % 60;

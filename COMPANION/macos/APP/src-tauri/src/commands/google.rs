@@ -22,9 +22,7 @@ pub async fn google_disconnect(
 }
 
 #[command]
-pub async fn google_status(
-    state: tauri::State<'_, GoogleState>,
-) -> Result<GoogleStatus, String> {
+pub async fn google_status(state: tauri::State<'_, GoogleState>) -> Result<GoogleStatus, String> {
     let inner = state.inner.lock().await;
     Ok(GoogleStatus {
         connected: inner.connected,

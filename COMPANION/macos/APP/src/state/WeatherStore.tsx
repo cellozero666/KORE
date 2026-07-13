@@ -8,14 +8,14 @@ import {
 } from "react";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 
-export interface WeatherData {
+interface WeatherData {
   temperature: number;
   max_temperature: number;
   min_temperature: number;
   weather_code: number;
 }
 
-export interface WeatherStatusEvent {
+interface WeatherStatusEvent {
   city: string | null;
   data: WeatherData | null;
   last_update: string | null;

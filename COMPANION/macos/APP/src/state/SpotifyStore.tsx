@@ -75,8 +75,6 @@ function spotifyReducer(
 
 interface SpotifyContextValue {
   state: SpotifyState;
-  setConnected: (connected: boolean) => void;
-  setUser: (user: SpotifyUser | null) => void;
   setPlayback: (playback: SpotifyPlayback | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -110,10 +108,6 @@ function SpotifyProvider({ children }: { children: ReactNode }) {
   const value = useMemo<SpotifyContextValue>(
     () => ({
       state,
-      setConnected: (connected: boolean) =>
-        dispatch({ type: "SET_CONNECTED", payload: connected }),
-      setUser: (user: SpotifyUser | null) =>
-        dispatch({ type: "SET_USER", payload: user }),
       setPlayback: (playback: SpotifyPlayback | null) =>
         dispatch({ type: "SET_PLAYBACK", payload: playback }),
       setLoading: (loading: boolean) =>
@@ -140,4 +134,3 @@ function useSpotify(): SpotifyContextValue {
 }
 
 export { SpotifyProvider, useSpotify };
-export type { SpotifyUser, SpotifyPlayback, SpotifyState };
