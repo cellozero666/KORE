@@ -1,6 +1,6 @@
 K.O.R.E.
 
-Knowledge. Operations. Response. Execution.
+Kat Orchestration Runtime Engine
 
 K.O.R.E. is an open-source ecosystem that combines embedded firmware and cross-platform desktop/mobile applications into a single intelligent companion experience.
 
@@ -15,9 +15,12 @@ The goal is to provide a seamless interaction between hardware and software thro
 
 ⸻
 
-Project Structure
+## Project Structure
+
+```text
 
 .
+
 ├── COMPANION/
 │   ├── android/
 │   ├── ios/
@@ -30,14 +33,13 @@ Project Structure
 │
 ├── SPEC/
 ├── ADR/
-├── HARNESS/
-├── AI/
-│
-└── LEGACY/
+└── HARNESS/
+
+```
 
 ⸻
 
-Technology Stack
+## Technology Stack
 
 Firmware
 
@@ -52,7 +54,7 @@ Companion Applications
 
 ⸻
 
-Development Philosophy
+## Development Philosophy
 
 K.O.R.E. follows a Specification Driven Development (SDD) workflow.
 
@@ -71,7 +73,7 @@ Core principles:
 
 ⸻
 
-AI-Assisted Development
+## AI-Assisted Development
 
 K.O.R.E. adopts specialized AI agents with clearly defined responsibilities.
 
@@ -119,7 +121,7 @@ Responsible for:
 
 ⸻
 
-Documentation
+## Documentation
 
 Project documentation is organized as follows:
 
@@ -134,9 +136,9 @@ Documentation is the single source of truth.
 
 ⸻
 
-Status
+## Status
 
-🚧 K.O.R.E. 2.0 is currently under active development.
+🚧 K.O.R.E. is currently under active development. Currently in v1.0.0 for KORE_OS and COMPANION APP (mac os)
 
 The repository is being rebuilt from the ground up using a Specification Driven Development workflow.
 
