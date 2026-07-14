@@ -74,6 +74,13 @@ impl CommunicationManager {
     async fn try_ble(&mut self) -> Result<ConnectionStatus, String> {
         self.ble.connect().await?;
         perform_handshake(&mut self.ble).await?;
+
+        let time_cmd = super::protocol::format_time_command();
+        match self.ble.send(&time_cmd).await {
+            Ok(resp) => info!("[TIME] initial sync: {}", resp.trim()),
+            Err(e) => warn!("[TIME] initial sync via BLE failed: {}", e),
+        }
+
         self.active = Some(TransportType::Ble);
         self.state = ConnectionState::Connected;
         Ok(ConnectionStatus::connected("BLE"))
@@ -82,6 +89,13 @@ impl CommunicationManager {
     async fn try_serial(&mut self) -> Result<ConnectionStatus, String> {
         self.serial.connect().await?;
         perform_handshake(&mut self.serial).await?;
+
+        let time_cmd = super::protocol::format_time_command();
+        match self.serial.send(&time_cmd).await {
+            Ok(resp) => info!("[TIME] initial sync: {}", resp.trim()),
+            Err(e) => warn!("[TIME] initial sync via Serial failed: {}", e),
+        }
+
         self.active = Some(TransportType::Serial);
         self.state = ConnectionState::Connected;
         Ok(ConnectionStatus::connected("Serial"))
