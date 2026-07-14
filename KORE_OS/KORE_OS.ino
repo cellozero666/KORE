@@ -8,14 +8,6 @@
 #include "src/core/command_parser.h"
 #include "src/config/config.h"
 #include "src/ui/screens/boot_screen.h"
-#include "src/ui/assets/faces/happy_face.h"
-#include "src/ui/assets/faces/extra_happy_face.h"
-#include "src/ui/assets/faces/sad_face.h"
-#include "src/ui/assets/faces/sleep_face.h"
-#include "src/ui/assets/faces/surprise_face.h"
-#include "src/ui/assets/faces/loving_face.h"
-#include "src/ui/assets/faces/confused_face.h"
-#include "src/ui/assets/faces/demon_face.h"
 #include "src/ui/screens/spotify_screen.h"
 #include "src/ui/screens/notifications.h"
 #include "src/managers/input_manager.h"
@@ -27,6 +19,8 @@
 #include "src/managers/clock_manager.h"
 #include "src/managers/sleep_manager.h"
 #include "src/managers/demon_manager.h"
+#include "src/managers/face_controller.h"
+#include "src/managers/watchdog_manager.h"
 
 #define TFT_CS   14
 #define TFT_DC   15
@@ -52,27 +46,16 @@ DisplayMode currentMode = DISPLAY_EMOTION;
 bool modeChanged = false;
 
 // --------------------------------------------------
-// WEATHER GLOBALS
-// --------------------------------------------------
-
-WeatherData currentWeather;
-bool weatherActive = false;
-unsigned long weatherStartTime = 0;
-
-// --------------------------------------------------
-// DEFAULT FACE
-// --------------------------------------------------
-
-FaceType defaultFace = FACE_HAPPY;
-unsigned long lastActivity = 0;
-
-// --------------------------------------------------
 // FACE TYPES
 // --------------------------------------------------
 
-FaceType currentFace = defaultFace;
-FaceType faceBeforeSpotify = defaultFace;
-unsigned long spotifyFaceTimer = 0;
+FaceType currentFace = FACE_HAPPY;
+
+// --------------------------------------------------
+// BOOT STATE
+// --------------------------------------------------
+
+bool bootDone = false;
 
 // --------------------------------------------------
 // SETUP
@@ -83,7 +66,10 @@ void setup()
     Serial.begin(115200);
     delay(1000);
 
+    logResetReason();
     Serial.println("KORE_COMPANION");
+
+    randomSeed(esp_random());
 
     loadEmotionRules();
 
@@ -115,12 +101,17 @@ void setup()
     u8g2.setFontMode(1);
     u8g2.setForegroundColor(KORE_CYAN);
 
+    initWatchdog();
+
     bootScreen(
         tft,
         KORE_CYAN
     );
 
-    setFace(defaultFace);
+    initBootAnimation();
+
+    fcInit();
+    fcRequest("boot", defaultFace, 10, 0);
 
     lastActivity = millis();
 }
@@ -131,13 +122,24 @@ void setup()
 
 void loop()
 {
+    if (!bootDone)
+    {
+        bootDone = updateBootAnimation();
+        if (!bootDone) return;
+        modeChanged = true;
+    }
+
+    feedWatchdog();
+
     updateClock();
     updateSleepManager();
     updateWiFiManager();
     updateInputManager();
     updateDemonManager();
+    fcUpdate();
     updateDisplayState();
     handleDisplayTransition();
     updateActiveModule();
+    fcUpdate();
     renderCurrentDisplay();
 }

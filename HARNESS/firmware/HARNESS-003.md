@@ -8,6 +8,8 @@ Este HARNESS não adiciona novas funcionalidades ao produto.
 
 Seu objetivo é aumentar a robustez, previsibilidade, escalabilidade e qualidade do firmware mantendo o comportamento funcional existente.
 
+Codigo a ser utilizado e modificado está no diretorio /KORE_OS - o codigo em /LEGACY/KORE_OS não deve ser usado
+
 ---
 
 # Escopo
@@ -165,6 +167,8 @@ O firmware deverá:
 - manter compatibilidade com Spotify;
 - manter Emotion System;
 - manter Notification System.
+
+A implementação deverá ser incremental. Após concluir cada um dos grandes itens (por exemplo: migração para .cpp/.h, FaceController, Boot, Watchdog), compile o firmware e confirme que ele continua compilando sem erros antes de iniciar o próximo item. Não acumule múltiplas grandes alterações sem validação intermediária.
 
 ---
 

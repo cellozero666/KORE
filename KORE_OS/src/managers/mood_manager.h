@@ -26,8 +26,7 @@ enum FaceType {
 
 extern FaceType currentFace;
 extern FaceType defaultFace;
-extern FaceType faceBeforeSpotify;
-extern unsigned long spotifyFaceTimer;
+extern bool faceNeedsRedraw;
 
 // --------------------------------------------------
 // FORWARD DECLARATIONS (Drawing and Animate functions)
@@ -52,180 +51,14 @@ void animateDemonFace(Adafruit_ST7789 & tft, uint16_t color);
 void animateConfusedFace(Adafruit_ST7789 & tft, uint16_t color);
 
 // --------------------------------------------------
-// WRAPPERS (Interface)
+// WRAPPERS (Interface) - Declarations only
 // --------------------------------------------------
 
-void onEnterEmotion() {
-  tft.fillScreen(ST77XX_BLACK);
-}
-
-void updateEmotion() {
-  // Lógica de blink, etc.
-}
-
-void renderEmotion() {
-  switch (currentFace) {
-
-  case FACE_HAPPY:
-    animateHappyFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_EXTRA_HAPPY:
-    animateExtraHappyFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_SAD:
-    animateSadFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_SLEEP:
-    animateSleepFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_SURPRISE:
-    animateSurpriseFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_LOVING:
-    animateLovingFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_CONFUSED:
-    animateConfusedFace(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_DEMON:
-    animateDemonFace(
-      tft,
-      ST77XX_RED
-    );
-    break;
-  }
-}
-
-// --------------------------------------------------
-// SET FACE
-// --------------------------------------------------
-
-void setFace(FaceType face) {
-
-  currentFace = face;
-
-  switch (currentFace) {
-
-  case FACE_HAPPY:
-    drawHappyScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_EXTRA_HAPPY:
-    drawExtraHappyScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_SAD:
-    drawSadScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_SLEEP:
-    drawSleepScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_SURPRISE:
-    drawSurpriseScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_LOVING:
-    drawLovingScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_CONFUSED:
-    drawConfusedScreen(
-      tft,
-      KORE_CYAN
-    );
-    break;
-
-  case FACE_DEMON:
-    drawDemonScreen(
-      tft,
-      ST77XX_RED
-    );
-    break;
-  }
-}
-
-// --------------------------------------------------
-// CURRENT FACE NAME
-// --------------------------------------------------
-
-String getCurrentFaceName() {
-
-  switch (currentFace) {
-
-  case FACE_HAPPY:
-    return "happy";
-
-  case FACE_EXTRA_HAPPY:
-    return "extrahappy";
-
-  case FACE_SAD:
-    return "sad";
-
-  case FACE_SLEEP:
-    return "sleep";
-
-  case FACE_SURPRISE:
-    return "surprise";
-
-  case FACE_LOVING:
-    return "loving";
-
-  case FACE_CONFUSED:
-    return "confused";
-
-  case FACE_DEMON:
-    return "demon";
-  }
-
-  return "unknown";
-}
+void onEnterEmotion();
+void updateEmotion();
+void renderEmotion();
+void setFace(FaceType face);
+String getCurrentFaceName();
+void resetFaceAnimationState();
 
 #endif
