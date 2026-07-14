@@ -17,6 +17,7 @@ bool faceNeedsRedraw = true;
 
 void onEnterEmotion() {
   tft.fillScreen(ST77XX_BLACK);
+  faceNeedsRedraw = true;
 }
 
 void updateEmotion() {
