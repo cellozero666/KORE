@@ -89,13 +89,13 @@ void processCommand(String command)
     }
     else
     {
-        if (command == "happy")       { fcRequest("boot", FACE_HAPPY, 10, 0); }
-        else if (command == "extrahappy") { fcRequest("boot", FACE_EXTRA_HAPPY, 10, 0); }
-        else if (command == "sad")    { fcRequest("boot", FACE_SAD, 10, 0); }
-        else if (command == "sleep")  { fcRequest("boot", FACE_SLEEP, 10, 0); }
-        else if (command == "surprise") { fcRequest("boot", FACE_SURPRISE, 10, 0); }
-        else if (command == "loving") { fcRequest("boot", FACE_LOVING, 10, 0); }
-        else if (command == "confused") { fcRequest("boot", FACE_CONFUSED, 10, 0); }
-        else if (command == "demon")  { fcRequest("boot", FACE_DEMON, 10, 0); }
+        if (command == "happy")       { fcRequest("default", FACE_HAPPY, 10, 0); }
+        else if (command == "extrahappy") { fcRequest("default", FACE_EXTRA_HAPPY, 10, 0); }
+        else if (command == "sad")    { fcRequest("default", FACE_SAD, 10, 0); }
+        else if (command == "sleep")  { fcRequest("default", FACE_SLEEP, 10, 0); }
+        else if (command == "surprise") { fcRequest("default", FACE_SURPRISE, 10, 0); }
+        else if (command == "loving") { fcRequest("default", FACE_LOVING, 10, 0); }
+        else if (command == "confused") { fcRequest("default", FACE_CONFUSED, 10, 0); }
+        else if (command == "demon")  { fcRequest("default", FACE_DEMON, 10, 0); }
     }
 }

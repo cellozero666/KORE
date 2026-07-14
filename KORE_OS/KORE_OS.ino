@@ -111,7 +111,7 @@ void setup()
     initBootAnimation();
 
     fcInit();
-    fcRequest("boot", defaultFace, 10, 0);
+    fcRequest("default", defaultFace, 10, 0);
 
     lastActivity = millis();
 }

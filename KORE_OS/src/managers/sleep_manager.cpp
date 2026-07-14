@@ -2,7 +2,6 @@
 #include "sleep_manager.h"
 #include "clock_manager.h"
 #include "mood_manager.h"
-#include "display_manager.h"
 #include "face_controller.h"
 
 FaceType defaultFace = FACE_HAPPY;    // owned by sleep_manager — the only module that modifies it
@@ -33,9 +32,5 @@ void updateSleepManager()
         return;
 
     defaultFace = newDefault;
-
-    if (currentMode == DISPLAY_EMOTION)
-    {
-        fcRequest("boot", defaultFace, 10, 0);
-    }
+    fcRequest("default", defaultFace, 10, 0);
 }
