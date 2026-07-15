@@ -5,8 +5,16 @@ import "../assets/css/Weather.css";
 
 function Weather() {
   const {
-    city, temperature, maxTemperature, minTemperature,
-    condition, lastUpdate, loading, error,
+    city,
+    temperature,
+    maxTemperature,
+    minTemperature,
+    condition,
+    icon,
+    lastUpdate,
+    loading,
+    error,
+    
   } = useWeatherService();
 
   const tempDisplay = temperature != null ? `${Math.round(temperature)}°` : "--";
@@ -34,7 +42,7 @@ function Weather() {
           </div>
 
           <div className="weather-temp-display">
-            <span className="weather-temp-value">{tempDisplay}</span>
+            <span className="weather-temp-value">{icon} {tempDisplay}</span>
             <span className="weather-condition">{condition}</span>
           </div>
 
