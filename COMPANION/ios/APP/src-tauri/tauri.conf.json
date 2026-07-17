@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "kore-companion-ios",
+  "productName": "K.O.R.E. Companion",
   "version": "0.1.0",
   "identifier": "com.kore.companion",
   "build": {
@@ -12,9 +12,10 @@
   "app": {
     "windows": [
       {
-        "title": "kore-companion-ios",
+        "title": "K.O.R.E. Companion",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "resizable": false
       }
     ],
     "security": {

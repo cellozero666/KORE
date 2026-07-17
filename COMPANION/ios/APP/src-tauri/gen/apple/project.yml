@@ -1,4 +1,4 @@
-name: kore-companion-ios
+name: kore-companion
 options:
   bundleIdPrefix: com.kore.companion
   deploymentTarget:
@@ -10,7 +10,7 @@ configs:
 settingGroups:
   app:
     base:
-      PRODUCT_NAME: kore-companion-ios
+      PRODUCT_NAME: K.O.R.E. Companion
       PRODUCT_BUNDLE_IDENTIFIER: com.kore.companion
 targetTemplates:
   app:
@@ -24,20 +24,20 @@ targetTemplates:
     settings:
       groups: [app]
 targets:
-  kore-companion-ios_iOS:
+  kore-companion_iOS:
     type: application
     platform: iOS
     sources:
       - path: Sources
       - path: Assets.xcassets
       - path: Externals
-      - path: kore-companion-ios_iOS
+      - path: kore-companion_iOS
       - path: assets
         buildPhase: resources
         type: folder
       - path: LaunchScreen.storyboard
     info:
-      path: kore-companion-ios_iOS/Info.plist
+      path: kore-companion_iOS/Info.plist
       properties:
         LSRequiresIPhoneOS: true
         UILaunchStoryboardName: LaunchScreen
@@ -54,7 +54,7 @@ targets:
         CFBundleShortVersionString: 0.1.0
         CFBundleVersion: "0.1.0"
     entitlements:
-      path: kore-companion-ios_iOS/kore-companion-ios_iOS.entitlements
+      path: kore-companion_iOS/kore-companion_iOS.entitlements
     scheme:
       environmentVariables:
         RUST_BACKTRACE: full

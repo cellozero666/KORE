@@ -1,13 +1,13 @@
 # Uncomment the next line to define a global platform for your project
 
-target 'kore-companion-ios_iOS' do
+target 'kore-companion_iOS' do
 platform :ios, '14.0'
-  # Pods for kore-companion-ios_iOS
+  # Pods for kore-companion_iOS
 end
 
-target 'kore-companion-ios_macOS' do
+target 'kore-companion_macOS' do
 platform :osx, '11.0'
-  # Pods for kore-companion-ios_macOS
+  # Pods for kore-companion_macOS
 end
 
 # Delete the deployment target for iOS and macOS, causing it to be inherited from the Podfile

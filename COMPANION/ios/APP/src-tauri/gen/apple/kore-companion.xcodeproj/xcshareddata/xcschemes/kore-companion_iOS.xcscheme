@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "32F2BA2B317266FE50322B16"
-               BuildableName = "kore-companion-ios.app"
-               BlueprintName = "kore-companion-ios_iOS"
-               ReferencedContainer = "container:kore-companion-ios.xcodeproj">
+               BlueprintIdentifier = "1DC790182C751DC24708BC97"
+               BuildableName = "K.O.R.E. Companion.app"
+               BlueprintName = "kore-companion_iOS"
+               ReferencedContainer = "container:kore-companion.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,10 +30,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "32F2BA2B317266FE50322B16"
-            BuildableName = "kore-companion-ios.app"
-            BlueprintName = "kore-companion-ios_iOS"
-            ReferencedContainer = "container:kore-companion-ios.xcodeproj">
+            BlueprintIdentifier = "1DC790182C751DC24708BC97"
+            BuildableName = "K.O.R.E. Companion.app"
+            BlueprintName = "kore-companion_iOS"
+            ReferencedContainer = "container:kore-companion.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
@@ -65,10 +65,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "32F2BA2B317266FE50322B16"
-            BuildableName = "kore-companion-ios.app"
-            BlueprintName = "kore-companion-ios_iOS"
-            ReferencedContainer = "container:kore-companion-ios.xcodeproj">
+            BlueprintIdentifier = "1DC790182C751DC24708BC97"
+            BuildableName = "K.O.R.E. Companion.app"
+            BlueprintName = "kore-companion_iOS"
+            ReferencedContainer = "container:kore-companion.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -94,10 +94,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "32F2BA2B317266FE50322B16"
-            BuildableName = "kore-companion-ios.app"
-            BlueprintName = "kore-companion-ios_iOS"
-            ReferencedContainer = "container:kore-companion-ios.xcodeproj">
+            BlueprintIdentifier = "1DC790182C751DC24708BC97"
+            BuildableName = "K.O.R.E. Companion.app"
+            BlueprintName = "kore-companion_iOS"
+            ReferencedContainer = "container:kore-companion.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
