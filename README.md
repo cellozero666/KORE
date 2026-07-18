@@ -75,9 +75,10 @@ Core principles:
 
 ## AI-Assisted Development
 
-K.O.R.E. adopts specialized AI agents with clearly defined responsibilities.
+K.O.R.E. adopts specialized AI agents with clearly defined responsibilities. The names from the three Gurus on Chrono Trigger.
 
 Gaspar
+Just as Gaspar guides the heroes in Chrono Trigger, this agent guides the documentation, specs, and harness.
 
 Software architect.
 
@@ -91,6 +92,7 @@ Responsible for:
 Belthazar
 
 Primary implementation agent.
+Just as Guru Belthazar created the Epoch in Chrono Trigger, this agent is responsible for building, evolving, and maintaining the project's entire codebase.
 
 Powered by:
 
@@ -104,6 +106,7 @@ Responsible for:
 * Testing
 
 Melchior
+Just as Melchior forged the Masamune in Chrono Trigger using the Red Rock, this agent is responsible for transforming requirements into elegant, intuitive, and consistent interfaces.
 
 UI/UX specialist.
 
