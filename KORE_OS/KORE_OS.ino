@@ -5,12 +5,11 @@
 #include <pgmspace.h>
 
 #include "src/managers/output_manager.h"
-#include "src/core/command_parser.h"
+#include "src/core/input_adapter.h"
 #include "src/config/config.h"
 #include "src/ui/screens/boot_screen.h"
 #include "src/ui/screens/spotify_screen.h"
 #include "src/ui/screens/notifications.h"
-#include "src/managers/input_manager.h"
 #include "src/managers/mood_manager.h"
 #include "src/managers/emotion_manager.h"
 #include "src/managers/display_manager.h"
@@ -134,7 +133,7 @@ void loop()
     updateClock();
     updateSleepManager();
     updateWiFiManager();
-    updateInputManager();
+    updateInputAdapter();
     updateDemonManager();
     fcUpdate();
     updateDisplayState();

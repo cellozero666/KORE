@@ -1,11 +1,11 @@
 #include <Arduino.h>
-#include "input_manager.h"
-#include "../core/command_parser.h"
-#include "ble_manager.h"
-#include "ancs_manager.h"
-#include "tcp_manager.h"
+#include "input_adapter.h"
+#include "command_parser.h"
+#include "../managers/ble_manager.h"
+#include "../managers/ancs_manager.h"
+#include "../managers/tcp_manager.h"
 
-void updateInputManager()
+void updateInputAdapter()
 {
     if (Serial.available())
     {
