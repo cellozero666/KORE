@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
+import { StoreProvider, useApp } from "../../state";
 import LoadingScreen from "../common/LoadingScreen";
 import Sidebar from "./Sidebar";
 import Dashboard from "../../pages/Dashboard";
@@ -10,16 +11,24 @@ import Settings from "../../pages/Settings";
 import "../../assets/css/App.css";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  return (
+    <StoreProvider>
+      <AppContent />
+    </StoreProvider>
+  );
+}
+
+function AppContent() {
+  const { state, setLoading } = useApp();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 5000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [setLoading]);
 
-  if (loading) {
+  if (state.loading) {
     return <LoadingScreen />;
   }
 
