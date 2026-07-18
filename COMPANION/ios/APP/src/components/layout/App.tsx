@@ -1,6 +1,6 @@
-import { useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { StoreProvider, useApp } from "../../state";
+import { useConnection } from "../../hooks/useConnection";
 import LoadingScreen from "../common/LoadingScreen";
 import Sidebar from "./Sidebar";
 import Dashboard from "../../pages/Dashboard";
@@ -19,17 +19,27 @@ function App() {
 }
 
 function AppContent() {
-  const { state, setLoading } = useApp();
+  const { state } = useApp();
+  const { startConnection, connectionStep, elapsed } = useConnection();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [setLoading]);
+  if (state.loading && !state.error) {
+    return (
+      <LoadingScreen
+        diagnosticStep={connectionStep}
+        diagnosticElapsed={elapsed}
+      />
+    );
+  }
 
-  if (state.loading) {
-    return <LoadingScreen />;
+  if (state.error && !state.loading) {
+    return (
+      <LoadingScreen
+        error={state.error}
+        onRetry={startConnection}
+        diagnosticStep={connectionStep}
+        diagnosticElapsed={elapsed}
+      />
+    );
   }
 
   return (

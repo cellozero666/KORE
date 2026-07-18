@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09702C7F6F233C2F0D6926C9 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBE0BD62FC71CF9BFC92AB2 /* CoreBluetooth.framework */; };
 		141F35D4C445A29B178C1355 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = 7622079C4B7215FDAC300C69 /* libapp.a */; };
 		2AD8230BBBD8E28CEFB90532 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE5CE0C54DA00C010DE6207 /* WebKit.framework */; };
 		3E8D24ED67C2A9599DF10CFB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 700B3EAF057AA6B8A78BFAED /* Assets.xcassets */; };
@@ -23,29 +24,40 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		038D5EC4AEB9DBFE176155DE /* main.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.rs; sourceTree = "<group>"; };
+		038D5EC4AEB9DBFE176155DE /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
+		070B8B3E979D1E14BA5B6DB9 /* handshake.rs */ = {isa = PBXFileReference; path = handshake.rs; sourceTree = "<group>"; };
 		08D591448D38A0B288423D40 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		1E50DBD1FE9F0F94A74BE0E1 /* K.O.R.E. Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "K.O.R.E. Companion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E50DBD1FE9F0F94A74BE0E1 /* kore-companion_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "kore-companion_iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		218F0880FC449A15AAEA408B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3243EEB3584506DA25B61995 /* connection.rs */ = {isa = PBXFileReference; path = connection.rs; sourceTree = "<group>"; };
+		39F3FE17D8FD3A773CB89F8B /* ble.rs */ = {isa = PBXFileReference; path = ble.rs; sourceTree = "<group>"; };
 		4072D75A89F8A345355B4C25 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
 		458082E267FE498FF8EACA5F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		4E1E3C8D150CE25543F32895 /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
-		526B190AABFB9D3CA88F72AE /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
+		4E1E3C8D150CE25543F32895 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		526B190AABFB9D3CA88F72AE /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		5C33C6C2D9C47448895E551C /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		5D53E9061B7B5CDFB7A12769 /* kore-companion_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "kore-companion_iOS.entitlements"; sourceTree = "<group>"; };
-		64B7443A2C1BFD04BF6FF27F /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
+		64B7443A2C1BFD04BF6FF27F /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		67E588BC3607C660086C609E /* manager.rs */ = {isa = PBXFileReference; path = manager.rs; sourceTree = "<group>"; };
 		700B3EAF057AA6B8A78BFAED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		75982F09A38A05A0EDFDEBF0 /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
+		75982F09A38A05A0EDFDEBF0 /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
 		7622079C4B7215FDAC300C69 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
-		7859720E951AE018A758BFD8 /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
+		7859720E951AE018A758BFD8 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		821D75D87A60EEA01042E8A2 /* protocol.rs */ = {isa = PBXFileReference; path = protocol.rs; sourceTree = "<group>"; };
 		868685866AF5A2B09DE44C51 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		96B7440F4AAC938C94DEEB7D /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
+		9FBE0BD62FC71CF9BFC92AB2 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		ACE5CE0C54DA00C010DE6207 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		AE44EBA87F346047E44CB095 /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
+		AE44EBA87F346047E44CB095 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		B338C9BFECBF48B677BABEA4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		BDA1B100BB2B08DA34A69AB6 /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
+		BDA1B100BB2B08DA34A69AB6 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		D1F9B9567C6A495BCBAFB33A /* types.rs */ = {isa = PBXFileReference; path = types.rs; sourceTree = "<group>"; };
+		D6E5D0A18C27654A11133237 /* serial.rs */ = {isa = PBXFileReference; path = serial.rs; sourceTree = "<group>"; };
+		DA3998F1395B63CF4B05C2E6 /* connection.rs */ = {isa = PBXFileReference; path = connection.rs; sourceTree = "<group>"; };
 		DA404BA0220327357FAE5691 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
+		DAC3D91ED228AA57F1780A0E /* connection.rs */ = {isa = PBXFileReference; path = connection.rs; sourceTree = "<group>"; };
 		DBD21B2D3F67486616C341D0 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		E31A503CB6E0C8C2946B8483 /* connection.rs */ = {isa = PBXFileReference; path = connection.rs; sourceTree = "<group>"; };
 		EF30493C9C5E3AC3E68C1883 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FC28121569E36AF502D9BFCD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -56,6 +68,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45848DFAB00663209FF53774 /* libapp.a in Frameworks */,
+				09702C7F6F233C2F0D6926C9 /* CoreBluetooth.framework in Frameworks */,
 				FE375ACF92501D36C41E4641 /* CoreGraphics.framework in Frameworks */,
 				BA9ED3B46BCDFF567206577F /* Metal.framework in Frameworks */,
 				F88E2D8B00041CAD58D78CE7 /* MetalKit.framework in Frameworks */,
@@ -95,6 +108,7 @@
 		1ECAD56FD66F07F5DFC39E87 /* commands */ = {
 			isa = PBXGroup;
 			children = (
+				DA3998F1395B63CF4B05C2E6 /* connection.rs */,
 				526B190AABFB9D3CA88F72AE /* mod.rs */,
 			);
 			path = commands;
@@ -103,6 +117,7 @@
 		2A286398334853252B22FBB3 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				3243EEB3584506DA25B61995 /* connection.rs */,
 				7859720E951AE018A758BFD8 /* mod.rs */,
 			);
 			path = models;
@@ -136,7 +151,7 @@
 		57B4C0374F29417F2443E7E0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1E50DBD1FE9F0F94A74BE0E1 /* K.O.R.E. Companion.app */,
+				1E50DBD1FE9F0F94A74BE0E1 /* kore-companion_iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,7 +159,13 @@
 		65D4F7FF87C07D916CDF5295 /* communication */ = {
 			isa = PBXGroup;
 			children = (
+				39F3FE17D8FD3A773CB89F8B /* ble.rs */,
+				070B8B3E979D1E14BA5B6DB9 /* handshake.rs */,
+				67E588BC3607C660086C609E /* manager.rs */,
 				64B7443A2C1BFD04BF6FF27F /* mod.rs */,
+				821D75D87A60EEA01042E8A2 /* protocol.rs */,
+				D6E5D0A18C27654A11133237 /* serial.rs */,
+				D1F9B9567C6A495BCBAFB33A /* types.rs */,
 			);
 			path = communication;
 			sourceTree = "<group>";
@@ -160,6 +181,7 @@
 		95FCCC25EC9E4E4C92BFEB69 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FBE0BD62FC71CF9BFC92AB2 /* CoreBluetooth.framework */,
 				458082E267FE498FF8EACA5F /* CoreGraphics.framework */,
 				DA404BA0220327357FAE5691 /* libapp.a */,
 				B338C9BFECBF48B677BABEA4 /* Metal.framework */,
@@ -175,6 +197,7 @@
 		9D298ACBBD5E41EB57CA811E /* state */ = {
 			isa = PBXGroup;
 			children = (
+				E31A503CB6E0C8C2946B8483 /* connection.rs */,
 				AE44EBA87F346047E44CB095 /* mod.rs */,
 			);
 			path = state;
@@ -208,6 +231,7 @@
 		E5F7DA283B92A83FD4896D50 /* events */ = {
 			isa = PBXGroup;
 			children = (
+				DAC3D91ED228AA57F1780A0E /* connection.rs */,
 				4E1E3C8D150CE25543F32895 /* mod.rs */,
 			);
 			path = events;
@@ -227,6 +251,13 @@
 			);
 			name = src;
 			path = ../../src;
+			sourceTree = "<group>";
+		};
+		"TEMP_4770E76A-1A1B-4B93-9951-ED3E646E7724" /* x86_64 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = x86_64;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,7 +280,7 @@
 			packageProductDependencies = (
 			);
 			productName = "kore-companion_iOS";
-			productReference = 1E50DBD1FE9F0F94A74BE0E1 /* K.O.R.E. Companion.app */;
+			productReference = 1E50DBD1FE9F0F94A74BE0E1 /* kore-companion_iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -260,6 +291,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1DC790182C751DC24708BC97 = {
+						DevelopmentTeam = HH627JZ964;
+					};
+				};
 			};
 			buildConfigurationList = 8E00609892BE758A150860D9 /* Build configuration list for PBXProject "kore-companion" */;
 			developmentRegion = en;
@@ -453,7 +489,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ARCHS = arm64;
+				ARCHS = (
+					arm64,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "kore-companion_iOS/kore-companion_iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -469,20 +507,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kore.companion;
 				PRODUCT_NAME = "K.O.R.E. Companion";
 				SDKROOT = iphoneos;
@@ -495,7 +521,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ARCHS = arm64;
+				ARCHS = (
+					arm64,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "kore-companion_iOS/kore-companion_iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -511,20 +539,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kore.companion;
 				PRODUCT_NAME = "K.O.R.E. Companion";
 				SDKROOT = iphoneos;

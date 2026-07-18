@@ -22,6 +22,31 @@
   margin-top: var(--space-xs);
 }
 
+.loading-error {
+  margin-top: var(--space-lg);
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 300px;
+}
+
+.loading-retry {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-accent);
+  color: var(--color-bg-app);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.loading-retry:hover {
+  opacity: 0.8;
+}
+
 .loading-icon {
   margin-top: var(--space-xl);
   width: 64px;
@@ -33,4 +58,35 @@
   0% { color: #eeeeee; }
   50% { color: var(--color-accent); }
   100% { color: #eeeeee; }
+}
+
+.loading-diagnostic {
+  margin-top: var(--space-lg);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.loading-diagnostic-state {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0.5;
+  margin-bottom: var(--space-xs);
+}
+
+.loading-diagnostic-step {
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+  margin-bottom: var(--space-xs);
+}
+
+.loading-diagnostic-time {
+  font-size: 0.8rem;
+  opacity: 0.4;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

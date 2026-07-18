@@ -1,7 +1,156 @@
+import { useState, useRef, useCallback } from "react";
+import { useDashboard } from "../hooks/useDashboard";
+import { useSpotify, useGoogle } from "../state";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMicrochip, faClock, faWifi, faNetworkWired, faTerminal } from "@fortawesome/free-solid-svg-icons";
+import { faSpotify, faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { KoreIcon } from "../components/common/KoreIcon";
+import "../assets/css/Dashboard.css";
+
 function Dashboard() {
+  const {
+    firmwareVersion,
+    firmwareVersionLoading,
+    uptime,
+    uptimeLoading,
+    wifiStatus,
+    wifiStatusLoading,
+    connected,
+    sendRawCommand,
+  } = useDashboard();
+  const { state: spotifyState } = useSpotify();
+  const { state: googleState } = useGoogle();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [commandResponse, setCommandResponse] = useState<string | null>(null);
+  const [commandError, setCommandError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+
+  const handleSend = useCallback(async () => {
+    const cmd = inputRef.current?.value.trim();
+    if (!cmd) return;
+
+    setSending(true);
+    setCommandResponse(null);
+    setCommandError(null);
+
+    try {
+      const response = await sendRawCommand(cmd);
+      setCommandResponse(response);
+    } catch (err) {
+      setCommandError(String(err));
+    } finally {
+      setSending(false);
+    }
+  }, [sendRawCommand]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleSend();
+      }
+    },
+    [handleSend],
+  );
+
   return (
-    <div className="page">
-      <h1>Dashboard</h1>
+    <div className="dashboard">
+      <header className="dashboard-header">
+        <KoreIcon className={`dashboard-status-icon ${connected ? "connected" : "disconnected"}`} />
+        <div className="header-text">
+          <h1>K.O.R.E.</h1>
+          <span className={`status-label ${connected ? "connected" : "disconnected"}`}>
+            {connected ? "Connected" : "Disconnected"}
+          </span>
+        </div>
+      </header>
+
+      <section className="dashboard-section">
+        <div className="info-row">
+          <span className="info-label"><FontAwesomeIcon icon={faMicrochip} /> Firmware</span>
+          <span className="info-value">
+            {firmwareVersionLoading ? "..." : (firmwareVersion ?? "---")}
+          </span>
+        </div>
+        <div className="info-row">
+          <span className="info-label"><FontAwesomeIcon icon={faClock} /> Uptime</span>
+          <span className="info-value">
+            {uptimeLoading ? "..." : (uptime ?? "---")}
+          </span>
+        </div>
+      </section>
+
+      <div className="dashboard-divider" />
+
+      <section className="dashboard-section">
+        <div className="info-row">
+          <span className="info-label"><FontAwesomeIcon icon={faSpotify} /> Spotify</span>
+          <span
+            className={`info-value ${spotifyState.connected ? "status-connected" : "status-disconnected"}`}
+          >
+            {spotifyState.connected ? "Connected" : "Disconnected"}
+          </span>
+        </div>
+        <div className="info-row">
+          <span className="info-label"><FontAwesomeIcon icon={faGoogle} /> Google</span>
+          <span
+            className={`info-value ${googleState.connected ? "status-connected" : "status-disconnected"}`}
+          >
+            {googleState.connected ? "Connected" : "Disconnected"}
+          </span>
+        </div>
+      </section>
+
+      <div className="dashboard-divider" />
+
+      <section className="dashboard-section">
+        <div className="info-row">
+          <span className="info-label"><FontAwesomeIcon icon={faWifi} /> Wi-Fi</span>
+          <span
+            className={`info-value ${
+              wifiStatus?.connected ? "status-connected" : "status-disconnected"
+            }`}
+          >
+            {wifiStatusLoading
+              ? "..."
+              : wifiStatus
+                ? wifiStatus.connected
+                  ? "Connected"
+                  : "Disconnected"
+                : "---"}
+          </span>
+        </div>
+        <div className="info-row">
+          <span className="info-label"><FontAwesomeIcon icon={faNetworkWired} /> IP</span>
+          <span className="info-value">
+            {wifiStatusLoading ? "..." : (wifiStatus?.ipAddress ?? "-")}
+          </span>
+        </div>
+      </section>
+
+      <div className="dashboard-divider" />
+
+      <section className="dashboard-section command-test">
+        <h3><FontAwesomeIcon icon={faTerminal} /> Command Test</h3>
+        <div className="command-input-row">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Digite um comando..."
+            onKeyDown={handleKeyDown}
+            disabled={!connected}
+          />
+          <button onClick={handleSend} disabled={sending || !connected}>
+            {sending ? "..." : "Send"}
+          </button>
+        </div>
+        {commandResponse !== null && (
+          <div className="command-response">{commandResponse}</div>
+        )}
+        {commandError !== null && (
+          <div className="command-response error">{commandError}</div>
+        )}
+      </section>
     </div>
   );
 }
