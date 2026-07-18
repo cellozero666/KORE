@@ -20,6 +20,10 @@ class KORE_ServerCallbacks: public NimBLEServerCallbacks {
   public:
     void onConnect(NimBLEServer*, NimBLEConnInfo&) override;
     void onDisconnect(NimBLEServer*, NimBLEConnInfo&, int) override;
+    uint32_t onPassKeyDisplay() override;
+    void onPassKeyEntry(NimBLEConnInfo& connInfo) override;
+    void onConfirmPassKey(NimBLEConnInfo& connInfo, uint32_t pin) override;
+    void onAuthenticationComplete(NimBLEConnInfo& connInfo) override;
 };
 
 class KORE_RX_Callbacks: public NimBLECharacteristicCallbacks {

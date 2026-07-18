@@ -344,7 +344,27 @@ impl Transport for BleTransport {
     }
 
     async fn send(&mut self, data: &str) -> Result<String, String> {
-        info!("[BLE] SEND: '{}'", data);
+        self.send_with_timeout(data, 5).await
+    }
+
+    fn is_connected(&self) -> bool {
+        let status = self.connected;
+        info!("[BLE] is_connected() = {}", status);
+        status
+    }
+}
+
+// --------------------------------------------------
+// BleTransport-specific methods
+// --------------------------------------------------
+
+impl BleTransport {
+    async fn send_with_timeout(
+        &mut self,
+        data: &str,
+        timeout_secs: u64,
+    ) -> Result<String, String> {
+        info!("[BLE] SEND (timeout={}s): '{}'", timeout_secs, data);
         let peripheral = self
             .peripheral
             .as_ref()
@@ -379,9 +399,17 @@ impl Transport for BleTransport {
                 error!("[BLE] {}", msg);
                 msg
             })?;
-        info!("[BLE] Write successful, waiting for response (timeout: 5s)");
+        info!(
+            "[BLE] Write successful, waiting for response (timeout: {}s)",
+            timeout_secs
+        );
 
-        match tokio::time::timeout(Duration::from_secs(5), notification_rx.recv()).await {
+        match tokio::time::timeout(
+            Duration::from_secs(timeout_secs),
+            notification_rx.recv(),
+        )
+        .await
+        {
             Ok(Some(response)) => {
                 info!("[BLE] Response received: '{}'", response);
                 Ok(response)
@@ -392,16 +420,27 @@ impl Transport for BleTransport {
                 Err(msg)
             }
             Err(_) => {
-                let msg = "BLE: response timeout (5s)".to_string();
+                let msg = format!("BLE: response timeout ({}s)", timeout_secs);
                 warn!("[BLE] {}", msg);
                 Err(msg)
             }
         }
     }
 
-    fn is_connected(&self) -> bool {
-        let status = self.connected;
-        info!("[BLE] is_connected() = {}", status);
-        status
+    pub async fn send_pairing_trigger(&mut self) -> Result<String, String> {
+        self.step("Initiating secure pairing — iOS dialog may appear");
+        info!("[BLE] Initiating pairing trigger (timeout: 20s)");
+
+        let result = self.send_with_timeout(super::protocol::PING, 20).await;
+
+        match &result {
+            Ok(response) => info!("[BLE] Pairing trigger completed: '{}'", response.trim()),
+            Err(e) => {
+                warn!("[BLE] Pairing trigger failed: {}", e);
+                self.step(&format!("Pairing failed: {}", e));
+            }
+        }
+
+        result
     }
 }

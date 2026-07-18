@@ -30,6 +30,42 @@ void KORE_ServerCallbacks::onDisconnect(
     Serial.println(ok ? "OK" : "FAILED");
 }
 
+// --------------------------------------------------
+// SECURITY CALLBACKS (integrated in NimBLEServerCallbacks)
+// --------------------------------------------------
+
+uint32_t KORE_ServerCallbacks::onPassKeyDisplay()
+{
+    Serial.println("[BLE SEC] Passkey display request (Just Works — returning 0)");
+    return 0;
+}
+
+void KORE_ServerCallbacks::onPassKeyEntry(NimBLEConnInfo &)
+{
+    Serial.println("[BLE SEC] Passkey entry requested — not supported (Just Works)");
+}
+
+void KORE_ServerCallbacks::onConfirmPassKey(NimBLEConnInfo & connInfo, uint32_t pin)
+{
+    Serial.printf("[BLE SEC] Confirm passkey: %06u — auto-accepting\n", pin);
+}
+
+void KORE_ServerCallbacks::onAuthenticationComplete(NimBLEConnInfo & connInfo)
+{
+    if (connInfo.isEncrypted())
+    {
+        Serial.println("[BLE SEC] ✅ Authentication complete — encrypted channel established");
+    }
+    else
+    {
+        Serial.println("[BLE SEC] ❌ Authentication failed or incomplete");
+    }
+}
+
+// --------------------------------------------------
+// RX CALLBACKS
+// --------------------------------------------------
+
 void KORE_RX_Callbacks::onWrite(
     NimBLECharacteristic * characteristic,
     NimBLEConnInfo &
@@ -45,20 +81,34 @@ void KORE_RX_Callbacks::onWrite(
     }
 }
 
+// --------------------------------------------------
+// INIT
+// --------------------------------------------------
+
 void beginBLE()
 {
     NimBLEDevice::init("K.O.R.E.");
+
+    // Configure BLE security: bonding, MITM, secure connections
+    NimBLEDevice::setSecurityAuth(true, true, true);
+    NimBLEDevice::setSecurityIOCap(BLE_HS_IO_NO_INPUT_OUTPUT);
+
     bleServer = NimBLEDevice::createServer();
     bleServer->setCallbacks(new KORE_ServerCallbacks());
     bleService = bleServer->createService(KORE_SERVICE_UUID);
+
+    // RX characteristic — requires encryption for write (protected operation)
     bleRXCharacteristic = bleService->createCharacteristic(
         KORE_RX_UUID,
-        NIMBLE_PROPERTY::WRITE
+        NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC
     );
+
+    // TX characteristic — requires encryption for read
     bleTXCharacteristic = bleService->createCharacteristic(
         KORE_TX_UUID,
-        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY
+        NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::NOTIFY
     );
+
     bleRXCharacteristic->setCallbacks(new KORE_RX_Callbacks());
     bleService->start();
 

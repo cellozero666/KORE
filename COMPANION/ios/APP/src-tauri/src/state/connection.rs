@@ -23,6 +23,7 @@ impl AppState {
 
         if manager.is_connected() {
             let status = manager.status();
+            crate::events::connection::emit_status(app_handle, &status);
             return status;
         }
 

@@ -2,7 +2,7 @@ use log::{error, info, warn};
 use tauri::Emitter;
 
 use super::ble::BleTransport;
-use super::handshake::{perform_handshake, Transport};
+use super::handshake::Transport;
 use super::types::TransportType;
 
 use crate::models::connection::{ConnectionState, ConnectionStatus};
@@ -107,11 +107,40 @@ impl CommunicationManager {
         self.ble.connect().await?;
         info!("[MANAGER] ble.connect() succeeded");
 
-        self.set_step("Handshake: sending ping");
-        info!("[MANAGER] Performing handshake...");
-        perform_handshake(&mut self.ble).await?;
-        self.set_step("Handshake: valid response received");
-        info!("[MANAGER] Handshake succeeded");
+        // --------------------------------------------------
+        // Secure Pairing & Bonding
+        // --------------------------------------------------
+        // The first write to the protected RX characteristic triggers
+        // CoreBluetooth to initiate pairing if no bond exists.
+        //
+        // If already bonded, the write completes immediately (encrypted
+        // channel restored transparently). If not, iOS shows the native
+        // pairing dialog and waits for user confirmation.
+        // --------------------------------------------------
+
+        self.state = ConnectionState::Pairing;
+        self.set_step("Establishing secure connection — iOS dialog may appear");
+
+        info!("[MANAGER] Sending pairing trigger (ping with 20s timeout)...");
+        let ping_response = self.ble.send_pairing_trigger().await?;
+        info!("[MANAGER] Pairing trigger response: '{}'", ping_response.trim());
+
+        if !super::protocol::is_valid_handshake(&ping_response) {
+            let msg = format!("Unexpected handshake response: '{}'", ping_response.trim());
+            error!("[MANAGER] {}", msg);
+            self.state = ConnectionState::Error;
+            self.error_message = Some(msg.clone());
+            self.set_step("Handshake failed");
+            return Err(msg);
+        }
+
+        self.state = ConnectionState::Bonding;
+        self.set_step("Bond established — encrypted channel active");
+        info!("[MANAGER] Secure bond verified");
+
+        // --------------------------------------------------
+        // Clock sync
+        // --------------------------------------------------
 
         self.set_step("Synchronizing clock");
         let time_cmd = super::protocol::format_time_command();
@@ -124,7 +153,7 @@ impl CommunicationManager {
         self.active = Some(TransportType::Ble);
         self.state = ConnectionState::Connected;
         self.set_step("Connected — fully operational");
-        info!("[MANAGER] === CONNECTED VIA BLE ===");
+        info!("[MANAGER] === CONNECTED VIA BLE (SECURE) ===");
         Ok(ConnectionStatus::connected("BLE").with_step("Connected"))
     }
 

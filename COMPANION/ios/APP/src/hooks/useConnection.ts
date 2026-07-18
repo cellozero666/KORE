@@ -4,7 +4,7 @@ import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { useApp } from "../state";
 
 interface ConnectionStatus {
-  state: "Disconnected" | "Connecting" | "Connected" | "Error";
+  state: "Disconnected" | "Connecting" | "Pairing" | "Bonding" | "Connected" | "Error";
   transport: string | null;
   message: string | null;
   step: string | null;
@@ -70,10 +70,23 @@ export function useConnection() {
       console.log(
         `[DIAG] connect() returned: state=${result.state} step=${result.step} msg=${result.message}`,
       );
-      if (result.state === "Error") {
-        setError(result.message || "Conexão falhou");
-        setLoading(false);
-        stopPolling();
+      switch (result.state) {
+        case "Connected":
+          console.log("[DIAG] ✅ Already connected on return");
+          setConnected(true);
+          setLoading(false);
+          setError(null);
+          stopPolling();
+          break;
+        case "Error":
+          setError(result.message || "Conexão falhou");
+          setLoading(false);
+          stopPolling();
+          break;
+        default:
+          // Connecting / Pairing / Bonding / Disconnected:
+          // wait for event-based state transitions
+          break;
       }
     } catch (err) {
       console.error("[DIAG] connect() threw:", err);
@@ -81,7 +94,7 @@ export function useConnection() {
       setLoading(false);
       stopPolling();
     }
-  }, [setLoading, setError, startPolling, stopPolling]);
+  }, [setConnected, setLoading, setError, startPolling, stopPolling]);
 
   useEffect(() => {
     let unlisten: UnlistenFn | undefined;
@@ -118,6 +131,14 @@ export function useConnection() {
               console.log("[DIAG] Connecting event received");
               setLoading(true);
               break;
+            case "Pairing":
+              console.log("[DIAG] 🔐 Pairing event received:", message);
+              setLoading(true);
+              break;
+            case "Bonding":
+              console.log("[DIAG] 🔗 Bonding event received");
+              setLoading(true);
+              break;
             case "Error":
               console.log("[DIAG] ❌ Error event received:", message);
               setConnected(false);
@@ -143,6 +164,53 @@ export function useConnection() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // --------------------------------------------------
+  // Foreground detection — transparent reconnect
+  // --------------------------------------------------
+  // When the app returns from background (iOS suspends/resumes the WKWebView),
+  // check if the BLE connection is still alive. If not, reconnect
+  // without showing a permanent loading state.
+  // --------------------------------------------------
+
+  useEffect(() => {
+    async function checkOnForeground() {
+      console.log("[DIAG] App returned to foreground — checking connection");
+      try {
+        const status = await invoke<ConnectionStatus>(
+          "get_connection_status",
+        );
+        console.log(
+          `[DIAG] Foreground check: state=${status.state}`,
+        );
+
+        if (status.state === "Disconnected") {
+          console.log("[DIAG] Reconnecting after foreground...");
+          await startConnection();
+        }
+      } catch (err) {
+        console.warn("[DIAG] Foreground check failed:", err);
+      }
+    }
+
+    function handleVisibility() {
+      if (!document.hidden) {
+        checkOnForeground();
+      }
+    }
+
+    function handleFocus() {
+      checkOnForeground();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [startConnection]);
 
   return { startConnection, connectionStep, elapsed };
 }

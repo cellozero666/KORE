@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 pub enum ConnectionState {
     Disconnected,
     Connecting,
+    Pairing,
+    Bonding,
     Connected,
     Error,
 }
@@ -29,6 +31,24 @@ impl ConnectionStatus {
     pub fn connecting(transport: &str) -> Self {
         Self {
             state: ConnectionState::Connecting,
+            transport: Some(transport.to_string()),
+            message: None,
+            step: None,
+        }
+    }
+
+    pub fn pairing(transport: &str) -> Self {
+        Self {
+            state: ConnectionState::Pairing,
+            transport: Some(transport.to_string()),
+            message: None,
+            step: None,
+        }
+    }
+
+    pub fn bonding(transport: &str) -> Self {
+        Self {
+            state: ConnectionState::Bonding,
             transport: Some(transport.to_string()),
             message: None,
             step: None,
