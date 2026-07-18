@@ -79,9 +79,9 @@ K.O.R.E. adopts specialized AI agents with clearly defined responsibilities.
 The names come from the three Gurus on Chrono Trigger.
 
 Gaspar
-Just as Gaspar guides the heroes in Chrono Trigger, this agent guides the documentation, specs, and harness.
 
 Software architect.
+Just as Gaspar guides the heroes in Chrono Trigger, this agent guides the documentation, specs, and harness.
 
 Responsible for:
 
