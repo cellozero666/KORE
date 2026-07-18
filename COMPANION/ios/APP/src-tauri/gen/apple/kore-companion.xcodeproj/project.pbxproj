@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		141F35D4C445A29B178C1355 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = 7622079C4B7215FDAC300C69 /* libapp.a */; };
 		2AD8230BBBD8E28CEFB90532 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE5CE0C54DA00C010DE6207 /* WebKit.framework */; };
 		3E8D24ED67C2A9599DF10CFB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 700B3EAF057AA6B8A78BFAED /* Assets.xcassets */; };
 		45848DFAB00663209FF53774 /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA404BA0220327357FAE5691 /* libapp.a */; };
@@ -35,6 +36,7 @@
 		64B7443A2C1BFD04BF6FF27F /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
 		700B3EAF057AA6B8A78BFAED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		75982F09A38A05A0EDFDEBF0 /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
+		7622079C4B7215FDAC300C69 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		7859720E951AE018A758BFD8 /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
 		868685866AF5A2B09DE44C51 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		96B7440F4AAC938C94DEEB7D /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 		54215D8361AE027FFE859D15 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				796938D33958482A2B0E3541 /* arm64 */,
 			);
 			path = Externals;
 			sourceTree = "<group>";
@@ -144,6 +147,14 @@
 				64B7443A2C1BFD04BF6FF27F /* mod.rs */,
 			);
 			path = communication;
+			sourceTree = "<group>";
+		};
+		796938D33958482A2B0E3541 /* arm64 */ = {
+			isa = PBXGroup;
+			children = (
+				C7BCAD1A130A03BB1EEBFBD2 /* debug */,
+			);
+			path = arm64;
 			sourceTree = "<group>";
 		};
 		95FCCC25EC9E4E4C92BFEB69 /* Frameworks */ = {
@@ -175,6 +186,14 @@
 				45AEA2EFFF722708063AB0C4 /* kore-companion */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		C7BCAD1A130A03BB1EEBFBD2 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				7622079C4B7215FDAC300C69 /* libapp.a */,
+			);
+			path = debug;
 			sourceTree = "<group>";
 		};
 		DC4C11A35A515CA1AA83E653 /* kore-companion_iOS */ = {
@@ -269,6 +288,7 @@
 				3E8D24ED67C2A9599DF10CFB /* Assets.xcassets in Resources */,
 				90265D4BF8F0798A58B9F862 /* LaunchScreen.storyboard in Resources */,
 				F1277F482A512AC5AEB0E508 /* assets in Resources */,
+				141F35D4C445A29B178C1355 /* libapp.a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,8 +309,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Externals/x86_64/${CONFIGURATION}/libapp.a",
-				"$(SRCROOT)/Externals/arm64/${CONFIGURATION}/libapp.a",
+				"$(SRDROOT)/Externals/x86_64/${CONFIGURATION}/libapp.a",
+				"$(SRDROOT)/Externals/arm64/${CONFIGURATION}/libapp.a",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

@@ -1,0 +1,36 @@
+.loading-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
+}
+
+.loading-title {
+  font-size: 3rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.15em;
+}
+
+.loading-subtitle {
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  opacity: 0.6;
+  margin-top: var(--space-xs);
+}
+
+.loading-icon {
+  margin-top: var(--space-xl);
+  width: 64px;
+  height: 64px;
+  animation: pulse-color 2s ease-in-out infinite;
+}
+
+@keyframes pulse-color {
+  0% { color: #eeeeee; }
+  50% { color: var(--color-accent); }
+  100% { color: #eeeeee; }
+}
