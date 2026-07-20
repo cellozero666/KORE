@@ -15,6 +15,8 @@ extern NimBLECharacteristic * bleTXCharacteristic;
 extern String bleCommand;
 extern bool bleCommandPending;
 extern bool bleConnected;
+extern uint16_t ancsConnHandle;
+extern bool ancsShouldConnect;
 
 class KORE_ServerCallbacks: public NimBLEServerCallbacks {
   public:

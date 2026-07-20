@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "input_adapter.h"
 #include "command_parser.h"
+#include "app_normalizer.h"
 #include "../managers/ble_manager.h"
 #include "../managers/ancs_manager.h"
 #include "../managers/tcp_manager.h"
@@ -22,6 +23,7 @@ void updateInputAdapter()
     if (ancsAvailable())
     {
         String command = readANCSCommand();
+        command = normalizeNotificationCommand(command);
         processCommand(command);
     }
 

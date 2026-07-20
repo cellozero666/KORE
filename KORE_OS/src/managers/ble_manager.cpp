@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <NimBLEDevice.h>
 #include "ble_manager.h"
+#include "ancs_manager.h"
 
 NimBLEServer * bleServer = nullptr;
 NimBLEService * bleService = nullptr;
@@ -9,13 +10,19 @@ NimBLECharacteristic * bleTXCharacteristic = nullptr;
 String bleCommand = "";
 bool bleCommandPending = false;
 bool bleConnected = false;
+uint16_t ancsConnHandle = BLE_HS_CONN_HANDLE_NONE;
+bool ancsShouldConnect = false;
 
 void KORE_ServerCallbacks::onConnect(
     NimBLEServer *,
-    NimBLEConnInfo &
+    NimBLEConnInfo & connInfo
 ) {
     bleConnected = true;
-    Serial.println("[BLE] Device Connected");
+    ancsConnHandle = connInfo.getConnHandle();
+    Serial.print("[BLE] Device Connected — handle: ");
+    Serial.print(ancsConnHandle);
+    Serial.print(", ID: ");
+    Serial.println(connInfo.getIdAddress().toString().c_str());
 }
 
 void KORE_ServerCallbacks::onDisconnect(
@@ -24,6 +31,9 @@ void KORE_ServerCallbacks::onDisconnect(
     int
 ) {
     bleConnected = false;
+    ancsConnHandle = BLE_HS_CONN_HANDLE_NONE;
+    ancsShouldConnect = false;
+    stopANCS();
     Serial.println("[BLE] Device Disconnected");
     bool ok = server->startAdvertising();
     Serial.print("[BLE] Restart Advertising: ");
@@ -55,6 +65,7 @@ void KORE_ServerCallbacks::onAuthenticationComplete(NimBLEConnInfo & connInfo)
     if (connInfo.isEncrypted())
     {
         Serial.println("[BLE SEC] ✅ Authentication complete — encrypted channel established");
+        ancsShouldConnect = true;
     }
     else
     {

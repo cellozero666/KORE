@@ -14,6 +14,7 @@
 struct NotificationItem
 {
   String app;
+  String icon;
   String title;
   String body;
 };
@@ -31,6 +32,7 @@ extern bool notificationEmotionActive;
 extern unsigned long notificationEmotionStarted;
 
 extern String notificationApp;
+extern String notificationIcon;
 extern String notificationTitle;
 extern String notificationBody;
 
@@ -48,7 +50,7 @@ void renderNotification();
 // ICONS
 // --------------------------------------------------
 
-const unsigned char* getNotificationIcon(const String& app);
+const unsigned char* getNotificationIcon(const String& iconName, const String& app);
 
 // --------------------------------------------------
 // QUEUE
@@ -56,7 +58,7 @@ const unsigned char* getNotificationIcon(const String& app);
 
 bool notificationQueueEmpty();
 bool notificationQueueFull();
-void enqueueNotification(const String& app, const String& title, const String& body);
+void enqueueNotification(const String& app, const String& icon, const String& title, const String& body);
 bool dequeueNotification();
 
 // --------------------------------------------------

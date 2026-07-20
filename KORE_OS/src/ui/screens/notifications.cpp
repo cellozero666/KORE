@@ -23,6 +23,7 @@ bool notificationEmotionActive = false;
 unsigned long notificationEmotionStarted = 0;
 
 String notificationApp = "";
+String notificationIcon = "";
 String notificationTitle = "";
 String notificationBody = "";
 
@@ -74,71 +75,42 @@ void renderNotification()
 // --------------------------------------------------
 
 const unsigned char* getNotificationIcon(
+  const String& iconName,
   const String& app
 )
 {
+  if (iconName == "calendarIcon")           return (const unsigned char*) pgm_read_ptr(&icons[ICON_CALENDAR]);
+  if (iconName == "envelopeIcon")           return (const unsigned char*) pgm_read_ptr(&icons[ICON_ENVELOPE]);
+  if (iconName == "gearIcon")               return (const unsigned char*) pgm_read_ptr(&icons[ICON_GEAR]);
+  if (iconName == "smsIcon")                return (const unsigned char*) pgm_read_ptr(&icons[ICON_SMS]);
+  if (iconName == "whatsappIcon")           return (const unsigned char*) pgm_read_ptr(&icons[ICON_WHATSAPP]);
+  if (iconName == "facebookIcon")           return (const unsigned char*) pgm_read_ptr(&icons[ICON_FACEBOOK]);
+  if (iconName == "facebook_messengerIcon") return (const unsigned char*) pgm_read_ptr(&icons[ICON_FACEBOOK_MESSENGER]);
+  if (iconName == "instagramIcon")          return (const unsigned char*) pgm_read_ptr(&icons[ICON_INSTAGRAM]);
+  if (iconName == "linkedinIcon")           return (const unsigned char*) pgm_read_ptr(&icons[ICON_LINKEDIN]);
+  if (iconName == "redditIcon")             return (const unsigned char*) pgm_read_ptr(&icons[ICON_REDDIT]);
+  if (iconName == "threadsIcon")            return (const unsigned char*) pgm_read_ptr(&icons[ICON_THREADS]);
+  if (iconName == "tiktokIcon")             return (const unsigned char*) pgm_read_ptr(&icons[ICON_TIKTOK]);
+
   String appName = app;
   appName.toLowerCase();
 
-  if (
-    appName.indexOf("whatsapp") >= 0
-  )
-  {
-    return (const unsigned char*)
-      pgm_read_ptr(
-        &icons[ICON_WHATSAPP]
-      );
-  }
+  if (appName.indexOf("whatsapp") >= 0)
+    return (const unsigned char*) pgm_read_ptr(&icons[ICON_WHATSAPP]);
 
-  if (
-    appName.indexOf("calendar") >= 0 ||
-    appName.indexOf("calendário") >= 0
-  )
-  {
-    return (const unsigned char*)
-      pgm_read_ptr(
-        &icons[ICON_CALENDAR]
-      );
-  }
+  if (appName.indexOf("calendar") >= 0 || appName.indexOf("calendário") >= 0)
+    return (const unsigned char*) pgm_read_ptr(&icons[ICON_CALENDAR]);
 
-  if (
-    appName.indexOf("mail") >= 0 ||
-    appName.indexOf("email") >= 0
-  )
-  {
-    return (const unsigned char*)
-      pgm_read_ptr(
-        &icons[ICON_ENVELOPE]
-      );
-  }
+  if (appName.indexOf("mail") >= 0 || appName.indexOf("email") >= 0)
+    return (const unsigned char*) pgm_read_ptr(&icons[ICON_ENVELOPE]);
 
-  if (
-    appName.indexOf("messages") >= 0 ||
-    appName.indexOf("mensagens") >= 0 ||
-    appName.indexOf("sms") >= 0
-  )
-  {
-    return (const unsigned char*)
-      pgm_read_ptr(
-        &icons[ICON_SMS]
-      );
-  }
+  if (appName.indexOf("messages") >= 0 || appName.indexOf("mensagens") >= 0 || appName.indexOf("sms") >= 0)
+    return (const unsigned char*) pgm_read_ptr(&icons[ICON_SMS]);
 
-  if (
-    appName.indexOf("settings") >= 0 ||
-    appName.indexOf("system") >= 0
-  )
-  {
-    return (const unsigned char*)
-      pgm_read_ptr(
-        &icons[ICON_GEAR]
-      );
-  }
+  if (appName.indexOf("settings") >= 0 || appName.indexOf("system") >= 0)
+    return (const unsigned char*) pgm_read_ptr(&icons[ICON_GEAR]);
 
-  return (const unsigned char*)
-    pgm_read_ptr(
-      &icons[ICON_OTHER]
-    );
+  return (const unsigned char*) pgm_read_ptr(&icons[ICON_OTHER]);
 }
 
 // --------------------------------------------------
@@ -160,6 +132,7 @@ bool notificationQueueFull()
 
 void enqueueNotification(
   const String& app,
+  const String& icon,
   const String& title,
   const String& body
 )
@@ -173,6 +146,7 @@ void enqueueNotification(
     notificationTail
   ] = {
     app,
+    icon,
     title,
     body
   };
@@ -193,6 +167,11 @@ bool dequeueNotification()
     notificationQueue[
       notificationHead
     ].app;
+
+  notificationIcon =
+    notificationQueue[
+      notificationHead
+    ].icon;
 
   notificationTitle =
     notificationQueue[
@@ -224,46 +203,36 @@ void parseNotificationCommand(
   String command
 )
 {
-  int p1 =
-    command.indexOf('|');
+  int p1 = command.indexOf('|');
+  int p2 = command.indexOf('|', p1 + 1);
+  int p3 = command.indexOf('|', p2 + 1);
+  int p4 = command.indexOf('|', p3 + 1);
 
-  int p2 =
-    command.indexOf(
-      '|',
-      p1 + 1
-    );
+  if (p1 < 0 || p2 < 0) return;
 
-  int p3 =
-    command.indexOf(
-      '|',
-      p2 + 1
-    );
+  String app;
+  String icon;
+  String title;
+  String body;
 
-  if (
-    p1 < 0 ||
-    p2 < 0 ||
-    p3 < 0
-  )
+  if (p4 > 0)
+  {
+    app   = command.substring(p1 + 1, p2);
+    icon  = command.substring(p2 + 1, p3);
+    title = command.substring(p3 + 1, p4);
+    body  = command.substring(p4 + 1);
+  }
+  else if (p3 > 0)
+  {
+    app   = command.substring(p1 + 1, p2);
+    icon  = "";
+    title = command.substring(p2 + 1, p3);
+    body  = command.substring(p3 + 1);
+  }
+  else
   {
     return;
   }
-
-  String app =
-    command.substring(
-      p1 + 1,
-      p2
-    );
-
-  String title =
-    command.substring(
-      p2 + 1,
-      p3
-    );
-
-  String body =
-    command.substring(
-      p3 + 1
-    );
 
   notificationEmotion =
     detectEmotion(
@@ -272,6 +241,7 @@ void parseNotificationCommand(
 
   enqueueNotification(
     app,
+    icon,
     title,
     body
   );
@@ -312,6 +282,7 @@ void drawNotificationScreen(
 
   const unsigned char* icon =
     getNotificationIcon(
+      notificationIcon,
       notificationApp
     );
 

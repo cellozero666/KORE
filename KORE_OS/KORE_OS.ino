@@ -20,6 +20,7 @@
 #include "src/managers/demon_manager.h"
 #include "src/managers/face_controller.h"
 #include "src/managers/watchdog_manager.h"
+#include "src/managers/ancs_manager.h"
 
 #define TFT_CS   14
 #define TFT_DC   15
@@ -75,6 +76,7 @@ void setup()
     autoConnectWiFi();
 
     beginBLE();
+    beginANCS();
 
     beginTCPServer();
 
@@ -134,6 +136,7 @@ void loop()
     updateSleepManager();
     updateWiFiManager();
     updateInputAdapter();
+    updateANCS();
     updateDemonManager();
     fcUpdate();
     updateDisplayState();
