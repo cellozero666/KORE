@@ -14,11 +14,18 @@
 | HARNESS-006 | ✅ | Conexão BLE (btleplug, unificado macOS/iOS, `build.rs` com CoreBluetooth) |
 | HARNESS-007 | ✅ | Dashboard (reuso completo do código macOS) |
 
+### Shared HARNESS Concluídos (Infraestrutura Firmware)
+
+| HARNESS | Status | Descrição |
+|---|---|---|
+| SHARED-001 | ✅ | Secure BLE Pairing / Bonding / Reconexão |
+| SHARED-002 | ✅ | ANCS — Notification Source, Control Point, Data Source, Input Adapter, Normalização, Notification Manager (Firmware) |
+
 ### HARNESS Pendentes
 
 | HARNESS | Prioridade | SPEC |
 |---|---|---|
-| HARNESS-008 | Alta | `008_notifications.md` |
+| ~~HARNESS-008~~ | ~~Alta~~ | ~~`008_notifications.md`~~ — **OBSOLETO** (ver seção 7) |
 | HARNESS-009 | Alta | `009_spotify.md` |
 | HARNESS-010 | Alta | `010_google.md` |
 | HARNESS-011 | Média | `011_weather.md` |
@@ -41,15 +48,26 @@
 - HashRouter com 5 rotas
 - Instrumentação de diagnóstico para depuração da conexão BLE
 
+### Infraestrutura Compartilhada (Firmware — Validada em Hardware)
+
+- Secure BLE Pairing
+- Secure BLE Bonding
+- Reconexão automática
+- ANCS Discovery
+- Notification Source (ANCS)
+- Control Point (ANCS)
+- Data Source (ANCS)
+- Input Adapter (normalização de eventos)
+- Normalização de aplicativos (Bundle ID → nome canônico + ícone)
+- Notification Manager (fila + exibição no display)
+
 ### Funcionalidades Ainda Não Implementadas
 
-- Notificações (ANCS)
 - Integração Spotify
 - Integração Google
 - Integração Weather
 - Tela de Configurações
 - Persistência de estado
-- Reconexão automática
 
 ### Arquitetura Atual do Companion
 
@@ -163,7 +181,6 @@ React (TypeScript)
 | Google | `Google.tsx`, `GoogleStore` | — | ⏳ Placeholder |
 | Weather | `Weather.tsx`, `WeatherStore` | — | ⏳ Placeholder |
 | Settings | `Settings.tsx`, `SettingsStore` | — | ⏳ Placeholder |
-| Notifications | — | — | ❌ Não iniciado |
 
 ---
 
@@ -259,12 +276,12 @@ O fluxo completo de conexão BLE é:
 - **Conexão bloqueante**: O Mutex no `CommunicationManager` impede polling de status durante a conexão — step events são o único mecanismo de diagnóstico.
 - **Primeiro dispositivo**: A conexão seleciona o primeiro dispositivo BLE encontrado, sem filtro por nome ou ID.
 - **Threading frágil**: btleplug depende de `futures::executor::block_on()` dentro do delegate `centralManagerDidUpdateState:`, criando dependência entre GCD e Tokio.
-- **Sem reconexão automática**: Após desconexão, o usuário precisa reiniciar o app.
+- **Sem reconexão automática no Companion**: Após desconexão, o usuário precisa reiniciar o app. A reconexão no firmware (ESP32) está implementada e validada.
 - **Sem filtro de dispositivos**: Qualquer dispositivo com o serviço UUID é aceito.
 
 ### Confirmação de Funcionamento em Dispositivo Físico
 
-O app compila e é instalado no dispositivo iOS via `tauri ios build --debug`. O **build é bem-sucedido** (assinado, `K.O.R.E. Companion.app` gerado). O **funcionamento completo no dispositivo físico aguarda confirmação** após a correção do Info.plist e novo deploy.
+O app compila e é instalado no dispositivo iOS via `tauri ios build --debug`. O **build é bem-sucedido** (assinado, `K.O.R.E. Companion.app` gerado). O funcionamento foi confirmado em dispositivo físico (BLE + Dashboard operacional).
 
 ---
 
@@ -320,9 +337,9 @@ ESP32 (K.O.R.E. OS)
 
 ---
 
-## 4. Investigação sobre ANCS
+## 4. ANCS — Investigação e Implementação
 
-### Conclusão
+### Conclusão da Investigação
 
 **ANCS não pode ser consumido por um aplicativo rodando no próprio iPhone.**
 
@@ -331,108 +348,76 @@ ESP32 (K.O.R.E. OS)
 - O Companion App (iOS) **não participa da entrega das notificações**.
 - O Companion não pode se inscrever como cliente ANCS no próprio iPhone — isso viola a arquitetura do ANCS.
 
-### Decisão Arquitetural
+### Implementação Realizada
 
-A implementação de ANCS deverá ocorrer **exclusivamente no firmware do ESP32**.
+A implementação completa do ANCS ocorreu **exclusivamente no firmware do ESP32**, conforme documentado em:
 
-O ESP32 deverá:
+- `/SPEC/shared/002_apple_notification_center_service.md`
+- `/HARNESS/shared/HARNESS-002.md`
 
-1. Conectar-se como ANCS Client ao iPhone via BLE.
-2. Receber notificações do sistema (chamadas, mensagens, apps).
-3. Traduzir as notificações recebidas para o protocolo textual do K.O.R.E.
-4. Encaminhar para o parser de comandos do firmware.
+Funcionalidades validadas em hardware:
 
-O Companion App iOS não tem responsabilidade sobre ANCS. Ele continuará sendo apenas mais uma origem de dados que se comunica com o firmware via BLE usando o protocolo textual.
-
----
-
-## 5. Motivo da Pausa
-
-### Identificação da Melhoria Arquitetural
-
-O desenvolvimento iOS está sendo pausado temporariamente porque foi identificada uma melhoria arquitetural necessária no firmware.
-
-Atualmente, o firmware recebe dados de múltiplas origens de forma direta e não padronizada:
-
-- **Serial** (conexão USB/Serial direta)
-- **BLE Companion** (entrada do aplicativo Companion via Bluetooth)
-- **ANCS** (futuramente, notificações do iOS via BLE)
-- **Android** (futuramente, entrada do Companion Android)
-- Outras integrações futuras
-
-Cada origem atualmente precisa ser tratada separadamente, com lógica de parsing duplicada e sem uma camada de abstração que unifique o formato de entrada.
-
-### Nova Arquitetura Proposta
-
-```
-                Serial
-            BLE Companion
-                 ANCS
-               Android
-                   │
-                   ▼
-            Input Adapter
-                   │
-                   ▼
-       Protocolo K.O.R.E. (texto)
-                   │
-                   ▼
-          command_parser.cpp
-                   │
-                   ▼
-      Managers / Controllers / UI
-```
-
-### Decisões Arquiteturais
-
-1. **O protocolo textual do K.O.R.E. passa a ser considerado o contrato interno do firmware.**
-   - Toda comunicação interna ao sistema usará o formato `comando|param1|param2|...`.
-   - O contrato é estável e independente da origem dos dados.
-
-2. **O `command_parser` continua sendo a única porta de entrada da lógica de negócio.**
-   - Nenhuma regra de negócio é alterada.
-   - Nenhum manager ou controller precisa ser modificado.
-
-3. **Toda origem externa deverá ser traduzida para o protocolo K.O.R.E. antes de chegar ao parser.**
-   - O Input Adapter é responsável por essa tradução.
-   - Cada origem tem seu próprio adaptador.
-
-4. **O objetivo dessa camada é desacoplar o firmware das diferentes origens de dados.**
-   - Companion, ANCS, Android, Serial, BLE, todas se tornam equivalentes.
-   - Adicionar nova origem = criar novo adaptador.
-   - Nenhuma alteração no parser ou na lógica de negócio.
+- Discovery do serviço ANCS
+- Subscrição ao Notification Source
+- Escrita no Control Point (GetNotificationAttributes)
+- Recebimento no Data Source
+- Parsing de atributos (AppID, Title, Message)
+- Normalização de Bundle IDs
+- Exibição no display via Notification Manager
 
 ### Impacto no Companion iOS
 
-O Companion iOS **não é afetado** por essa mudança arquitetural. Ele continuará se comunicando com o firmware através do mesmo protocolo textual via BLE (`send_command` → `serialização` → `escrita na RX characteristic`). A única diferença é que, no firmware, essa entrada passará pelo Input Adapter antes de chegar ao parser — mas para o Companion, a interface permanece idêntica.
+O Companion iOS **não foi afetado** por esta implementação. O fluxo de notificações é:
+
+```
+iPhone
+  ↓ (ANCS nativo)
+ESP32 (ANCS Client)
+  ↓ (protocolo textual)
+Input Adapter → Notification Manager → Display
+```
+
+O Companion iOS continua sendo apenas mais uma origem de dados que se comunica com o firmware via BLE usando o protocolo textual.
+
+---
+
+## 5. Motivo da Pausa (Resolvido)
+
+### Melhoria Arquitetural Implementada
+
+A melhoria arquitetural do firmware foi concluída. O Input Adapter foi implementado e validado, unificando o tratamento de todas as origens de dados (Serial, BLE Companion, ANCS) sob o mesmo protocolo textual K.O.R.E.
+
+### Impacto no Companion iOS
+
+O Companion iOS **não foi afetado** por essa mudança arquitetural. Ele continua se comunicando com o firmware através do mesmo protocolo textual via BLE (`send_command` → `serialização` → `escrita na RX characteristic`). A interface permanece idêntica.
 
 ---
 
 ## 6. Próximos Passos — Checklist para Retomada
 
-### Fase 1: Firmware
+### Fase 1: Firmware ✅ (Concluída)
 
-- [ ] Implementar a camada Input Adapter no firmware do ESP32
-- [ ] Criar adaptador para Serial
-- [ ] Criar adaptador para BLE Companion
-- [ ] Criar adaptador para ANCS (preparação, implementação futura)
-- [ ] Validar que a compatibilidade com o protocolo atual foi preservada
-- [ ] Testar o firmware atualizado com o Companion (Serial e BLE)
+- [x] Implementar a camada Input Adapter no firmware do ESP32
+- [x] Criar adaptador para Serial
+- [x] Criar adaptador para BLE Companion
+- [x] Criar adaptador para ANCS
+- [x] Validar que a compatibilidade com o protocolo atual foi preservada
+- [x] Testar o firmware atualizado com o Companion (Serial e BLE)
 
-### Fase 2: Integração
+### Fase 2: Integração ✅ (Concluída)
 
-- [ ] Integrar novamente o Companion ao firmware atualizado
-- [ ] Validar comunicação BLE completa (scan, connect, handshake, send, receive)
-- [ ] Revisar impactos da nova arquitetura no Companion
-- [ ] Atualizar documentação se necessário
+- [x] Integrar novamente o Companion ao firmware atualizado
+- [x] Validar comunicação BLE completa (scan, connect, handshake, send, receive)
+- [x] Revisar impactos da nova arquitetura no Companion
+- [x] Atualizar documentação
 
 ### Fase 3: Retomada do iOS
 
-- [ ] Revisar o estado do código iOS (verificar se algo quebrou com as mudanças no firmware)
-- [ ] Executar `cargo check` e `npx tsc --noEmit` para validar compilação
-- [ ] Realizar deploy em dispositivo físico para validar BLE
+- [x] Revisar o estado do código iOS (verificar se algo quebrou com as mudanças no firmware)
+- [x] Executar `cargo check` e `npx tsc --noEmit` para validar compilação
+- [x] Realizar deploy em dispositivo físico para validar BLE
 - [ ] Retomar HARNESS pendentes na ordem:
-  1. HARNESS-008: Notificações
+  1. ~~HARNESS-008: Notificações~~ **OBSOLETO** — substituído por SHARED-002 (firmware)
   2. HARNESS-009: Spotify
   3. HARNESS-010: Google
   4. HARNESS-011: Weather
@@ -441,5 +426,38 @@ O Companion iOS **não é afetado** por essa mudança arquitetural. Ele continua
 
 ---
 
-*Documento gerado em 2026-07-18. Último HARNESS concluído: HARNESS-007 (Dashboard).*
-*Motivo da pausa: Implementação do Input Adapter no firmware do ESP32.*
+## 7. HARNESS-008 — Descontinuado
+
+### Motivo
+
+O fluxo de notificações foi completamente movido para a infraestrutura Shared (firmware ESP32).
+
+O Companion iOS não participa mais do processamento ou entrega das notificações. O fluxo oficial é:
+
+```
+iPhone → ANCS (nativo) → ESP32 → Input Adapter → Notification Manager → Display
+```
+
+### Documentos de Substituição
+
+A responsabilidade do HARNESS-008 foi absorvida por:
+
+| Documento | Caminho |
+|---|---|
+| SPEC | `/SPEC/shared/002_apple_notification_center_service.md` |
+| HARNESS | `/HARNESS/shared/HARNESS-002.md` |
+
+### Status dos Documentos Originais
+
+| Documento | Status |
+|---|---|
+| `SPEC/companion/02_ios/008_notifications.md` | ⛔ Substituída — manter no projeto para referência histórica |
+| `HARNESS/companion/ios/HARNESS-008.md` | ⛔ Obsoleto — manter no projeto para referência histórica |
+
+---
+
+*Documento gerado em 2026-07-18. Última atualização: 2026-07-20.*
+*Último HARNESS concluído: HARNESS-007 (Dashboard) + SHARED-001 e SHARED-002 (Infraestrutura Firmware).*
+*Motivo da pausa original (Input Adapter): Resolvido. Infraestrutura compartilhada validada em hardware.*
+*HARNESS-008 descontinuado — responsabilidade absorvida pela arquitetura Shared (firmware).*
+*Próximo HARNESS: HARNESS-009 (Spotify).*

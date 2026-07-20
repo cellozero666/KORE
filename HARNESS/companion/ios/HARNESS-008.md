@@ -1,6 +1,16 @@
-# HARNESS-008 - Notifications
+# HARNESS-008 - Notifications (OBSOLETO)
 
-## Objetivo
+## ⛔ Obsoleto — Substituído pela Arquitetura Shared
+
+Este HARNESS não será implementado.
+
+**Substituído por:**
+- `/SPEC/shared/002_apple_notification_center_service.md`
+- `/HARNESS/shared/HARNESS-002.md`
+
+**Razão:** O fluxo de notificações (ANCS) foi implementado exclusivamente no firmware ESP32.
+
+## Objetivo (Histórico)
 
 Implementar a SPEC `008_notifications.md`.
 

@@ -1,8 +1,22 @@
 # 008_notifications.md
 
+# ⛔ OBSOLETO — Substituído pela Arquitetura Shared
+
+**Este documento não será implementado no Companion iOS.**
+
+O fluxo de notificações foi completamente movido para a infraestrutura Shared (firmware ESP32).
+
+**Substituído por:**
+- `/SPEC/shared/002_apple_notification_center_service.md`
+- `/HARNESS/shared/HARNESS-002.md`
+
+**Razão:** O ANCS é um serviço BLE que exige que o dispositivo atue como ANCS Client (GATT Client). Um aplicativo iOS não pode ser ANCS Client do próprio iPhone. A implementação foi realizada no firmware ESP32.
+
+---
+
 # Notifications
 
-## Objetivo
+## Objetivo (Histórico)
 
 Implementar o monitoramento contínuo das notificações do iOS utilizando o Apple Notification Center Service (ANCS), capturando eventos do sistema e encaminhando-os ao K.O.R.E. OS.
 
